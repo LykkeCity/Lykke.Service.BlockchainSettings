@@ -6,5 +6,6 @@ namespace Lykke.Service.BlockchainSettings.Settings.ServiceSettings
     public class BlockchainSettingsSettings
     {
         public DbSettings Db { get; set; }
+        public CacheSettings RedisCache { get; set; }
     }
 }

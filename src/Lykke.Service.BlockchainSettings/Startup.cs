@@ -13,6 +13,8 @@ using Lykke.Service.BlockchainSettings.Modules;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using Lykke.MonitoringServiceApiCaller;
+using Lykke.Service.BlockchainSettings.Attributes;
+using Lykke.Service.BlockchainSettings.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,7 +45,11 @@ namespace Lykke.Service.BlockchainSettings
         {
             try
             {
-                services.AddMvc()
+                services.AddMvc(options =>
+                    {
+                        options.Filters.Add(typeof(CheckModelStateAttribute), 0);
+                        options.Filters.Add(typeof(ValidateActionParametersAttribute), 1);
+                    })
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.ContractResolver =
@@ -53,6 +59,8 @@ namespace Lykke.Service.BlockchainSettings
                 services.AddSwaggerGen(options =>
                 {
                     options.DefaultLykkeConfiguration("v1", "BlockchainSettings API");
+
+                    options.OperationFilter<ApiKeyHeaderAccessTokenOperationFilter>();
                 });
 
                 var builder = new ContainerBuilder();
@@ -62,7 +70,11 @@ namespace Lykke.Service.BlockchainSettings
                 Log = CreateLogWithSlack(services, appSettings);
 
                 builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.BlockchainSettingsService), Log));
+                builder.RegisterModule(new DataLayerModule(appSettings.Nested(x => x.BlockchainSettingsService), Log));
+                builder.RegisterModule(new CacheModule(appSettings.Nested(x => x.BlockchainSettingsService.RedisCache), Log));
+                builder.RegisterModule(new SecurityModule(appSettings.Nested(x => x.ApiKeys), Log));
                 builder.Populate(services);
+
                 ApplicationContainer = builder.Build();
 
                 return new AutofacServiceProvider(ApplicationContainer);
@@ -177,7 +189,7 @@ namespace Lykke.Service.BlockchainSettings
 
             aggregateLogger.AddLog(consoleLogger);
 
-            var dbLogConnectionStringManager = settings.Nested(x => x.BlockchainSettingsService.Db.LogsConnString);
+            var dbLogConnectionStringManager = settings.Nested(x => x.BlockchainSettingsService.Db.LogsConnectionString);
             var dbLogConnectionString = dbLogConnectionStringManager.CurrentValue;
 
             if (string.IsNullOrEmpty(dbLogConnectionString))

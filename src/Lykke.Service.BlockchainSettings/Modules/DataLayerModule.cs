@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
+using Lykke.Service.BlockchainSettings.AzureRepositories.Repositories;
+using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Core.Services;
 using Lykke.Service.BlockchainSettings.Settings.ServiceSettings;
 using Lykke.Service.BlockchainSettings.Services;
@@ -9,14 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.BlockchainSettings.Modules
 {
-    public class ServiceModule : Module
+    public class DataLayerModule : Module
     {
         private readonly IReloadingManager<BlockchainSettingsSettings> _settings;
         private readonly ILog _log;
         // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
         private readonly IServiceCollection _services;
 
-        public ServiceModule(IReloadingManager<BlockchainSettingsSettings> settings, ILog log)
+        public DataLayerModule(IReloadingManager<BlockchainSettingsSettings> settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -26,23 +28,9 @@ namespace Lykke.Service.BlockchainSettings.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_log)
-                .As<ILog>()
-                .SingleInstance();
-
-            builder.RegisterType<HealthService>()
-                .As<IHealthService>()
-                .SingleInstance();
-
-            builder.RegisterType<StartupManager>()
-                .As<IStartupManager>();
-
-            builder.RegisterType<ShutdownManager>()
-                .As<IShutdownManager>();
-
-            builder.RegisterType<BlockchainSettingsService>()
-                .As<IBlockchainSettingsService>()
-                .SingleInstance();
+            builder.RegisterInstance<IBlockchainSettingsRepository>(
+                BlockchainSettingsRepository.CreateRepository(_settings.ConnectionString(x => x.Db.DataConnectionString),
+                    _log));
 
             builder.Populate(_services);
         }
