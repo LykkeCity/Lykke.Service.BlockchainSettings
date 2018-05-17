@@ -2,9 +2,9 @@
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
 using Lykke.Service.BlockchainSettings.AzureRepositories.Repositories;
-using Lykke.Service.BlockchainSettings.Cache;
 using Lykke.Service.BlockchainSettings.Core.Repositories;
-using Lykke.Service.BlockchainSettings.Settings.ServiceSettings;
+using Lykke.Service.BlockchainSettings.Shared.Cache;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Redis;

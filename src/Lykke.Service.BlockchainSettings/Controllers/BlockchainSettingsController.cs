@@ -1,20 +1,18 @@
-﻿using System;
+﻿using Lykke.Common.Api.Contract.Responses;
+using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+using Lykke.Service.BlockchainSettings.Core.Exceptions;
+using Lykke.Service.BlockchainSettings.Models.Requests;
+using Lykke.Service.BlockchainSettings.Models.Responses;
+using Lykke.Service.BlockchainSettings.Shared.Attributes;
+using Lykke.Service.BlockchainSettings.Shared.Cache;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Lykke.Common.Api.Contract.Responses;
-using Lykke.Service.BlockchainSettings.Attributes;
-using Lykke.Service.BlockchainSettings.Cache;
-using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
-using Lykke.Service.BlockchainSettings.Core.Exceptions;
-using Lykke.Service.BlockchainSettings.Core.Services;
-using Lykke.Service.BlockchainSettings.Models.Responses;
-using Lykke.Service.BlockchainSettings.Settings.ServiceSettings;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 
 namespace Lykke.Service.BlockchainSettings.Controllers
 {
@@ -58,14 +56,14 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// Get specific Blockchain setting
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("{type}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
         [SwaggerOperation("Get")]
         [ProducesResponseType(typeof(BlockchainSettingsCreateRequest), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetAsync([Required][FromQuery]string type)
+        public async Task<IActionResult> GetAsync([Required][FromRoute]string type)
         {
             var setting = await _blockchainSettingsService.GetAsync(type);
 
@@ -96,6 +94,10 @@ namespace Lykke.Service.BlockchainSettings.Controllers
             {
                 await _blockchainSettingsService.CreateAsync(settings);
             }
+            catch (NotValidException e)
+            {
+                return CreateContentResult(StatusCodes.Status400BadRequest, e.Message);
+            }
             catch (AlreadyExistsException e)
             {
                 return CreateContentResult(StatusCodes.Status409Conflict, e.Message);
@@ -123,6 +125,10 @@ namespace Lykke.Service.BlockchainSettings.Controllers
             {
                 await _blockchainSettingsService.UpdateAsync(settings);
             }
+            catch (NotValidException e)
+            {
+                return CreateContentResult(StatusCodes.Status400BadRequest, e.Message);
+            }
             catch (AlreadyUpdatedException e)
             {
                 return CreateContentResult(StatusCodes.Status409Conflict, e.Message);
@@ -135,7 +141,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// Remove Blockchain settings
         /// </summary>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("{type}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
         [SwaggerOperation("Remove")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
@@ -143,7 +149,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveAsync([FromQuery]string type)
+        public async Task<IActionResult> RemoveAsync([FromRoute]string type)
         {
             try
             {
@@ -172,6 +178,17 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         }
 
         private BlockchainSetting MapToDomain(BlockchainSettingsCreateRequest request)
+        {
+            return new BlockchainSetting()
+            {
+                Type = request.Type,
+                HotWalletAddress = request.HotWalletAddress,
+                ApiUrl = request.ApiUrl,
+                SignServiceUrl = request.SignServiceUrl
+            };
+        }
+
+        private BlockchainSetting MapToDomain(BlockchainSettingsUpdateRequest request)
         {
             return new BlockchainSetting()
             {

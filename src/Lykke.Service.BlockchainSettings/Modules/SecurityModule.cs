@@ -1,13 +1,9 @@
-﻿using System.Linq;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac;
 using Common.Log;
-using Lykke.Service.BlockchainSettings.Core.Services;
-using Lykke.Service.BlockchainSettings.Security;
-using Lykke.Service.BlockchainSettings.Settings.ServiceSettings;
-using Lykke.Service.BlockchainSettings.Services;
+using Lykke.Service.BlockchainSettings.Shared.Security;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.SettingsReader;
-using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Lykke.Service.BlockchainSettings.Modules
 {

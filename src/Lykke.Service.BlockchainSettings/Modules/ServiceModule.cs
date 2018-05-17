@@ -2,8 +2,8 @@
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
 using Lykke.Service.BlockchainSettings.Core.Services;
-using Lykke.Service.BlockchainSettings.Settings.ServiceSettings;
 using Lykke.Service.BlockchainSettings.Services;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 

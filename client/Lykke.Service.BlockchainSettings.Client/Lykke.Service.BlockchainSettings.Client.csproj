@@ -24,13 +24,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AutorestClient\**" />
+    <EmbeddedResource Remove="AutorestClient\**" />
+    <None Remove="AutorestClient\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="6.6.0" />
+    <PackageReference Include="Lykke.HttpClientGenerator" Version="1.0.0" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.11" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="AutorestClient\" />
     <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Lykke.Service.BlockchainSettings.Models\Lykke.Service.BlockchainSettings.Models.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,127 +1,55 @@
-﻿using System;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Logs;
+using Lykke.MonitoringServiceApiCaller;
 using Lykke.Service.BlockchainSettings.Core.Services;
-using Lykke.Service.BlockchainSettings.Settings;
 using Lykke.Service.BlockchainSettings.Modules;
+using Lykke.Service.BlockchainSettings.Shared.Attributes;
+using Lykke.Service.BlockchainSettings.Shared.Settings;
+using Lykke.Service.BlockchainSettings.Shared.Swagger;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
-using Lykke.MonitoringServiceApiCaller;
-using Lykke.Service.BlockchainSettings.Attributes;
-using Lykke.Service.BlockchainSettings.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using Lykke.Service.BlockchainSettings.Shared;
 
 namespace Lykke.Service.BlockchainSettings
 {
-    public class Startup
+    //Used in hosted server
+    public class Startup : BlockchainSettingsStartupBase
     {
         private string _monitoringServiceUrl;
 
-        public IHostingEnvironment Environment { get; }
-        public IContainer ApplicationContainer { get; private set; }
-        public IConfigurationRoot Configuration { get; }
-        public ILog Log { get; private set; }
-
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env) : base(env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-
-            Environment = env;
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public override (IContainer, ILog) RegisterContainer(IServiceCollection services)
         {
-            try
-            {
-                services.AddMvc(options =>
-                    {
-                        options.Filters.Add(typeof(CheckModelStateAttribute), 0);
-                        options.Filters.Add(typeof(ValidateActionParametersAttribute), 1);
-                    })
-                    .AddJsonOptions(options =>
-                    {
-                        options.SerializerSettings.ContractResolver =
-                            new Newtonsoft.Json.Serialization.DefaultContractResolver();
-                    });
+            var builder = new ContainerBuilder();
+            var appSettings = Configuration.LoadSettings<AppSettings>();
+            _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient.MonitoringServiceUrl;
 
-                services.AddSwaggerGen(options =>
-                {
-                    options.DefaultLykkeConfiguration("v1", "BlockchainSettings API");
+            var log = CreateLogWithSlack(services, appSettings);
 
-                    options.OperationFilter<ApiKeyHeaderAccessTokenOperationFilter>();
-                });
+            builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.BlockchainSettingsService), Log));
+            builder.RegisterModule(new DataLayerModule(appSettings.Nested(x => x.BlockchainSettingsService), Log));
+            builder.RegisterModule(new CacheModule(appSettings.Nested(x => x.BlockchainSettingsService.RedisCache), Log));
+            builder.RegisterModule(new SecurityModule(appSettings.Nested(x => x.ApiKeys), Log));
+            builder.Populate(services);
 
-                var builder = new ContainerBuilder();
-                var appSettings = Configuration.LoadSettings<AppSettings>();
-                _monitoringServiceUrl = appSettings.CurrentValue.MonitoringServiceClient.MonitoringServiceUrl;
-
-                Log = CreateLogWithSlack(services, appSettings);
-
-                builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.BlockchainSettingsService), Log));
-                builder.RegisterModule(new DataLayerModule(appSettings.Nested(x => x.BlockchainSettingsService), Log));
-                builder.RegisterModule(new CacheModule(appSettings.Nested(x => x.BlockchainSettingsService.RedisCache), Log));
-                builder.RegisterModule(new SecurityModule(appSettings.Nested(x => x.ApiKeys), Log));
-                builder.Populate(services);
-
-                ApplicationContainer = builder.Build();
-
-                return new AutofacServiceProvider(ApplicationContainer);
-            }
-            catch (Exception ex)
-            {
-                Log?.WriteFatalError(nameof(Startup), nameof(ConfigureServices), ex);
-                throw;
-            }
+            return (builder.Build(), Log);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
-        {
-            try
-            {
-                if (env.IsDevelopment())
-                {
-                    app.UseDeveloperExceptionPage();
-                }
-
-                app.UseLykkeForwardedHeaders();
-                app.UseLykkeMiddleware("BlockchainSettings", ex => new { Message = "Technical problem" });
-
-                app.UseMvc();
-                app.UseSwagger(c =>
-                {
-                    c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
-                });
-                app.UseSwaggerUI(x =>
-                {
-                    x.RoutePrefix = "swagger/ui";
-                    x.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                });
-                app.UseStaticFiles();
-
-                appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());
-                appLifetime.ApplicationStopping.Register(() => StopApplication().GetAwaiter().GetResult());
-                appLifetime.ApplicationStopped.Register(() => CleanUp().GetAwaiter().GetResult());
-            }
-            catch (Exception ex)
-            {
-                Log?.WriteFatalError(nameof(Startup), nameof(Configure), ex);
-                throw;
-            }
-        }
-
-        private async Task StartApplication()
+        protected override async Task StartApplication()
         {
             try
             {
@@ -140,7 +68,7 @@ namespace Lykke.Service.BlockchainSettings
             }
         }
 
-        private async Task StopApplication()
+        protected override async Task StopApplication()
         {
             try
             {
@@ -158,7 +86,7 @@ namespace Lykke.Service.BlockchainSettings
             }
         }
 
-        private async Task CleanUp()
+        protected override async Task CleanUp()
         {
             try
             {

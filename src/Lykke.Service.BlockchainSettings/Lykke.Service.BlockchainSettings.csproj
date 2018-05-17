@@ -48,7 +48,13 @@
   <ItemGroup>
     <ProjectReference Include="..\Lykke.Service.BlockchainSettings.AzureRepositories\Lykke.Service.BlockchainSettings.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.BlockchainSettings.Core\Lykke.Service.BlockchainSettings.Core.csproj" />
+    <ProjectReference Include="..\Lykke.Service.BlockchainSettings.Models\Lykke.Service.BlockchainSettings.Models.csproj" />
     <ProjectReference Include="..\Lykke.Service.BlockchainSettings.Services\Lykke.Service.BlockchainSettings.Services.csproj" />
+    <ProjectReference Include="..\Lykke.Service.BlockchainSettings.Shared\Lykke.Service.BlockchainSettings.Shared.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

@@ -4,5 +4,47 @@
         <name>Lykke.Service.BlockchainSettings.Client</name>
     </assembly>
     <members>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHandlers.ApiKeyHeaderHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHandlers.ResponseHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <inheritdoc />
+            <exception cref="T:Lykke.Service.BlockchainSettings.Client.Exception.NotOkException"></exception>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.IBlockchainSettingsController.GetAllSettingsAsync">
+            <summary>
+            Get all settings
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.IBlockchainSettingsController.GetSettingsByTypeAsync(System.String)">
+            <summary>
+            Get settings by type
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.IBlockchainSettingsController.CreateAsync(Lykke.Service.BlockchainSettings.Models.Requests.BlockchainSettingsCreateRequest)">
+            <summary>
+            Create settings
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.IBlockchainSettingsController.UpdateAsync(Lykke.Service.BlockchainSettings.Models.Requests.BlockchainSettingsUpdateRequest)">
+            <summary>
+            Update settings
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.IBlockchainSettingsController.RemoveAsync(System.String)">
+            <summary>
+            Remove settings
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.IIsAliveController.GetIsAliveAsync">
+            <summary>
+            Checks service health
+            </summary>
+        </member>
+        <member name="M:Lykke.Service.BlockchainSettings.Client.IBlockchainSettingsClient.GetIsAliveAsync">
+            <summary>
+            Checks service health
+            </summary>
+        </member>
     </members>
 </doc>

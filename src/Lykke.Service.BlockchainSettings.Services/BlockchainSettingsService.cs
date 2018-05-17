@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+using Lykke.Service.BlockchainSettings.Core.Exceptions;
 using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Core.Services;
 
@@ -9,15 +10,23 @@ namespace Lykke.Service.BlockchainSettings.Services
     public class BlockchainSettingsService : IBlockchainSettingsService
     {
         private readonly IBlockchainSettingsRepository _blockchainSettingsRepository;
+        private readonly IBlockchainValidationService _blockchainValidationService;
 
-        public BlockchainSettingsService(IBlockchainSettingsRepository blockchainSettingsRepository)
+        public BlockchainSettingsService(IBlockchainSettingsRepository blockchainSettingsRepository, 
+            IBlockchainValidationService blockchainValidationService)
         {
             _blockchainSettingsRepository = blockchainSettingsRepository;
+            _blockchainValidationService = blockchainValidationService;
         }
 
         /// <inheritdoc/>
         public async Task CreateAsync(BlockchainSetting settings)
         {
+            var isValid = await _blockchainValidationService.ValidateAsync(settings.ApiUrl, settings.Type, settings.HotWalletAddress);
+
+            if (!isValid)
+                throw new NotValidException($"Blockchain integration api({settings.ApiUrl}) states that {settings.HotWalletAddress} is not a valid address");
+
             await _blockchainSettingsRepository.CreateAsync(settings);
         }
 
