@@ -102,6 +102,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
                     blockchainSettingsService.Object,
                     new DistributedCacheFake()
                 );
+                builder.RegisterInstance<IAccessTokenService>(accessTokenService.Object);
                 builder.RegisterInstance<IBlockchainSettingsServiceCached>(cachedService).SingleInstance();
                 builder.RegisterInstance<ILog>(log).SingleInstance();
                 builder.Populate(services);
