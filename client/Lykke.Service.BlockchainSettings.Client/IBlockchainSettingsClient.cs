@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.HttpClientGenerator.Caching;
 using Lykke.Service.BlockchainSettings.Client.Exception;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Models.Requests;
@@ -28,12 +29,14 @@ namespace Lykke.Service.BlockchainSettings.Client
         /// Get all settings
         /// </summary>
         [Get("/api/blockchain-settings/all")]
+        [ClientCaching(Minutes = 30)]
         Task<BlockchainSettingsCollectionResponse> GetAllSettingsAsync();
 
         /// <summary>
         /// Get settings by type
         /// </summary>
         [Get("/api/blockchain-settings/{type}")]
+        [ClientCaching(Minutes = 30)]
         Task<BlockchainSettingsResponse> GetSettingsByTypeAsync(string type);
 
         /// <summary>
