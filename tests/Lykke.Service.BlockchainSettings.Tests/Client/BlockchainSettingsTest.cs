@@ -38,7 +38,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public void GetAllSettings__Called__Returns()
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));
-            var client = factory.CreateNew("http://localhost", "default",
+            var client = factory.CreateNew("http://localhost", "default", true,
                 new RequestInterceptorHandler(fixture.Client));
             var allSettings = client.GetAllSettingsAsync().Result;
 

@@ -27,7 +27,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public void IsAlive__Called__ReturnsResult()
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_IsAlive__Called__ReturnsResult));
-            var client = factory.CreateNew("http://localhost", "default",
+            var client = factory.CreateNew("http://localhost", "default", true,
                 new RequestInterceptorHandler(fixture.Client));
             var isAliveResponse = client.GetIsAliveAsync().Result;
 
