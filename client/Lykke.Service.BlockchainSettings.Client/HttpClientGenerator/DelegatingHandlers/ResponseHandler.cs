@@ -26,6 +26,9 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.Delegating
             bool isError = false;
             var result = await base.SendAsync(request, cancellationToken);
 
+            if (result.StatusCode == HttpStatusCode.NoContent)
+                return result;
+
             if (result.StatusCode != HttpStatusCode.OK)
             {
                 var serializedResponse = await result.Content.ReadAsStringAsync();
@@ -33,7 +36,7 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.Delegating
                 try
                 {
                     ErrorResponse error = Newtonsoft.Json.JsonConvert.DeserializeObject<ErrorResponse>(serializedResponse);
-                    if (string.IsNullOrEmpty(error?.ErrorMessage))
+                    if (!string.IsNullOrEmpty(error?.ErrorMessage))
                         throw new NotOkException((int)result.StatusCode, error.ErrorMessage);
 
                 }

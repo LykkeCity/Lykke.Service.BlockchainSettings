@@ -10,7 +10,7 @@ namespace Lykke.Service.BlockchainSettings.Services
     {
         private ILog _log;
 
-        public BlockchainValidationService(IBlockchainApiClient apiClient, ILog log)
+        public BlockchainValidationService(ILog log)
         {
             _log = log.CreateComponentScope(nameof(BlockchainValidationService));
         }
