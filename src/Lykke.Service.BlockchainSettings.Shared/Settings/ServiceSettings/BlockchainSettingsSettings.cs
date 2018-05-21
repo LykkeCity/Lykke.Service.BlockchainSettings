@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings
 {
@@ -7,5 +8,6 @@ namespace Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings
     {
         public DbSettings Db { get; set; }
         public CacheSettings RedisCache { get; set; }
+        public IEnumerable<ApiKey> Keys { get; set; }
     }
 }

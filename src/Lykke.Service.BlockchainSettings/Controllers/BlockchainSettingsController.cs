@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Lykke.Service.BlockchainSettings.Controllers
 {
-    [Route("api/blockchainSettings")]
+    [Route("api/blockchain-settings")]
     public class BlockchainSettingsController : Controller
     {
         private readonly IBlockchainSettingsServiceCached _blockchainSettingsService;

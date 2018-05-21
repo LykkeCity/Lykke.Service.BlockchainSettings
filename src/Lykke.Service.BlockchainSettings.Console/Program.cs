@@ -66,8 +66,6 @@ namespace Lykke.Service.BlockchainSettings.Console
 
         private static async Task CreateSettingsAsync(string pathToJsonFileAbsolute, string blockchainSettingsUrl, string apiKey)
         {
-            await Task.Delay(20000);
-
             if (!File.Exists(pathToJsonFileAbsolute))
             {
                 System.Console.WriteLine($"File at {pathToJsonFileAbsolute} does not exist");

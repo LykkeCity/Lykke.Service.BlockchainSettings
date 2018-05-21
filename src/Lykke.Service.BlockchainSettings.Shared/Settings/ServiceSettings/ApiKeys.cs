@@ -20,9 +20,4 @@ namespace Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings
         public string Key { get; set; }
         public ApiKeyAccessType AccessType { get; set; }
     }
-
-    public class ApiKeys
-    {
-        public IEnumerable<ApiKey> Keys { get; set; }
-    }
 }

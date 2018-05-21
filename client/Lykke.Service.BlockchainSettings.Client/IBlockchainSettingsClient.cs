@@ -17,7 +17,7 @@ namespace Lykke.Service.BlockchainSettings.Client
         /// <summary>
         /// Checks service health
         /// </summary>
-        [Get("/api/IsAlive")]
+        [Get("/api/isAlive")]
         Task<IsAliveResponse> GetIsAliveAsync();
 
         #endregion
@@ -27,34 +27,34 @@ namespace Lykke.Service.BlockchainSettings.Client
         /// <summary>
         /// Get all settings
         /// </summary>
-        [Get("/api/blockchainSettings/all")]
+        [Get("/api/blockchain-settings/all")]
         Task<BlockchainSettingsCollectionResponse> GetAllSettingsAsync();
 
         /// <summary>
         /// Get settings by type
         /// </summary>
-        [Get("/api/blockchainSettings/{type}")]
+        [Get("/api/blockchain-settings/{type}")]
         Task<BlockchainSettingsResponse> GetSettingsByTypeAsync(string type);
 
         /// <summary>
         /// Create settings
         /// </summary>
         /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
-        [Post("/api/blockchainSettings")]
+        [Post("/api/blockchain-settings")]
         Task CreateAsync(BlockchainSettingsCreateRequest createRequest);
 
         /// <summary>
         /// Update settings
         /// </summary>
         /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
-        [Put("/api/blockchainSettings")]
+        [Put("/api/blockchain-settings")]
         Task UpdateAsync(BlockchainSettingsUpdateRequest updateRequest);
 
         /// <summary>
         /// Remove settings
         /// </summary>
         /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
-        [Delete("/api/blockchainSettings/{type}")]
+        [Delete("/api/blockchain-settings/{type}")]
         Task RemoveAsync(string type);
 
         #endregion
