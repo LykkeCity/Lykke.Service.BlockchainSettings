@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Lykke.Common.Api.Contract.Responses;
+using Lykke.Service.BlockchainSettings.Client.Exception;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Models.Requests;
 using Lykke.Service.BlockchainSettings.Models.Responses;
@@ -33,25 +34,28 @@ namespace Lykke.Service.BlockchainSettings.Client
         /// Get settings by type
         /// </summary>
         [Get("/api/blockchainSettings/{type}")]
-        Task<BlockchainSettingsCollectionResponse> GetSettingsByTypeAsync(string type);
+        Task<BlockchainSettingsResponse> GetSettingsByTypeAsync(string type);
 
         /// <summary>
         /// Create settings
         /// </summary>
+        /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
         [Post("/api/blockchainSettings")]
-        Task<BlockchainSettingsCollectionResponse> CreateAsync(BlockchainSettingsCreateRequest createRequest);
+        Task CreateAsync(BlockchainSettingsCreateRequest createRequest);
 
         /// <summary>
         /// Update settings
         /// </summary>
+        /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
         [Put("/api/blockchainSettings")]
-        Task<BlockchainSettingsCollectionResponse> UpdateAsync(BlockchainSettingsUpdateRequest updateRequest);
+        Task UpdateAsync(BlockchainSettingsUpdateRequest updateRequest);
 
         /// <summary>
         /// Remove settings
         /// </summary>
+        /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
         [Delete("/api/blockchainSettings/{type}")]
-        Task<BlockchainSettingsCollectionResponse> RemoveAsync(string type);
+        Task RemoveAsync(string type);
 
         #endregion
 

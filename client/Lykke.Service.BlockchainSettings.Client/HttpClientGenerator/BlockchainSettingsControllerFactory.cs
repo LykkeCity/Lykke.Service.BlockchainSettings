@@ -9,6 +9,12 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
 {
     public class BlockchainSettingsControllerFactory : IBlockchainSettingsControllerFactory
     {
+        public IBlockchainSettingsClient CreateNew(BlockchainSettingsServiceClientSettings settings,
+            params DelegatingHandler[] handlers)
+        {
+            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, handlers);
+        }
+
         public IBlockchainSettingsClient CreateNew(string url, string apiKey, params DelegatingHandler[] handlers)
         {
             var builder = new HttpClientGeneratorBuilder(url)

@@ -31,7 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.BlockchainSet
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.BlockchainSettings.Models", "src\Lykke.Service.BlockchainSettings.Models\Lykke.Service.BlockchainSettings.Models.csproj", "{FEC5DCD3-ED5B-4AD0-B505-18C1BD42EB96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.BlockchainSettings.Shared", "src\Lykke.Service.BlockchainSettings.Shared\Lykke.Service.BlockchainSettings.Shared.csproj", "{AF58339F-753B-474A-AB1B-0FFDEE39DA97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.BlockchainSettings.Shared", "src\Lykke.Service.BlockchainSettings.Shared\Lykke.Service.BlockchainSettings.Shared.csproj", "{AF58339F-753B-474A-AB1B-0FFDEE39DA97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5. Tools", "5. Tools", "{6FBBE745-87C7-4D44-B618-1565D447763B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.BlockchainSettings.Console", "src\Lykke.Service.BlockchainSettings.Console\Lykke.Service.BlockchainSettings.Console.csproj", "{97536F0C-A49F-4D6A-85FE-B3F184CFFEE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +75,10 @@ Global
 		{AF58339F-753B-474A-AB1B-0FFDEE39DA97}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF58339F-753B-474A-AB1B-0FFDEE39DA97}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF58339F-753B-474A-AB1B-0FFDEE39DA97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97536F0C-A49F-4D6A-85FE-B3F184CFFEE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97536F0C-A49F-4D6A-85FE-B3F184CFFEE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97536F0C-A49F-4D6A-85FE-B3F184CFFEE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97536F0C-A49F-4D6A-85FE-B3F184CFFEE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +89,7 @@ Global
 		{2D5F52EC-2A27-4045-81ED-72355E2A6325} = {CC2067D7-1971-47BB-B491-5649EA3C18B2}
 		{3C300C31-97D3-41E8-A627-C53491BDA28B} = {C9A2CFDE-EA32-4946-B679-7CE6EFA816B8}
 		{05C9FAE1-C362-45E7-BDBC-3959D786B4EF} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
+		{97536F0C-A49F-4D6A-85FE-B3F184CFFEE2} = {6FBBE745-87C7-4D44-B618-1565D447763B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F95BC4A4-D507-442D-AC36-5125FC7A3CEB}

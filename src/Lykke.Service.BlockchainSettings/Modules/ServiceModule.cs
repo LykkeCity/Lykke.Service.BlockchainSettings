@@ -44,6 +44,10 @@ namespace Lykke.Service.BlockchainSettings.Modules
                 .As<IBlockchainSettingsService>()
                 .SingleInstance();
 
+            builder.RegisterType<BlockchainValidationService>()
+                .As<IBlockchainValidationService>()
+                .SingleInstance();
+
             builder.Populate(_services);
         }
     }
