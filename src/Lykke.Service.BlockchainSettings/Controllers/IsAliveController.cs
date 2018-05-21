@@ -8,7 +8,7 @@ using Lykke.Service.BlockchainSettings.Core.Services;
 namespace Lykke.Service.BlockchainSettings.Controllers
 {
     // NOTE: See https://lykkex.atlassian.net/wiki/spaces/LKEWALLET/pages/35755585/Add+your+app+to+Monitoring
-    [Route("api/[controller]")]
+    [Route("api/isAlive")]
     public class IsAliveController : Controller
     {
         private readonly IHealthService _healthService;

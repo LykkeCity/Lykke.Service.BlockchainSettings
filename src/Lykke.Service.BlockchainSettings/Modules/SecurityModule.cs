@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using System.Collections.Generic;
+using Autofac;
 using Common.Log;
 using Lykke.Service.BlockchainSettings.Shared.Security;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
@@ -9,10 +10,10 @@ namespace Lykke.Service.BlockchainSettings.Modules
 {
     public class SecurityModule : Module
     {
-        private readonly IReloadingManager<ApiKeys> _settings;
+        private readonly IReloadingManager<IEnumerable<ApiKey>> _settings;
         private readonly ILog _log;
 
-        public SecurityModule(IReloadingManager<ApiKeys> settings, ILog log)
+        public SecurityModule(IReloadingManager<IEnumerable<ApiKey>> settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -20,7 +21,7 @@ namespace Lykke.Service.BlockchainSettings.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            var dict = _settings.CurrentValue.Keys.ToDictionary(x => x.Key, y=> y.AccessType);
+            var dict = _settings.CurrentValue.ToDictionary(x => x.Key, y=> y.AccessType);
 
             builder.RegisterInstance(new AccessTokenService(dict))
                 .As<IAccessTokenService>();

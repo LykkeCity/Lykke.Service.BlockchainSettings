@@ -12,8 +12,5 @@ namespace Lykke.Service.BlockchainSettings.Shared.Settings
         public SlackNotificationsSettings SlackNotifications { get; set; }
 
         public MonitoringServiceClientSettings MonitoringServiceClient { get; set; }
-
-        public ApiKeys ApiKeys { get; set; }
-
     }
 }

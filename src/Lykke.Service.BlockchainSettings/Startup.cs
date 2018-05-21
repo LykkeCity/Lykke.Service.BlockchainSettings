@@ -43,7 +43,7 @@ namespace Lykke.Service.BlockchainSettings
             builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.BlockchainSettingsService), log));
             builder.RegisterModule(new DataLayerModule(appSettings.Nested(x => x.BlockchainSettingsService), log));
             builder.RegisterModule(new CacheModule(appSettings.Nested(x => x.BlockchainSettingsService.RedisCache), log));
-            builder.RegisterModule(new SecurityModule(appSettings.Nested(x => x.ApiKeys), log));
+            builder.RegisterModule(new SecurityModule(appSettings.Nested(x => x.BlockchainSettingsService.Keys), log));
             builder.Populate(services);
 
             return (builder.Build(), log);
