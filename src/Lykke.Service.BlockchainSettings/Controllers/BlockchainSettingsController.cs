@@ -37,6 +37,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAllAsync()
         {
             var settings = await _blockchainSettingsService.GetAllAsync();
@@ -63,6 +64,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAsync([Required][FromRoute]string type)
         {
             var setting = await _blockchainSettingsService.GetAsync(type);
@@ -86,6 +88,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> CreateAsync([FromBody]BlockchainSettingsCreateRequest request)
         {
             BlockchainSetting settings = MapToDomain(request);
@@ -117,6 +120,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateAsync([FromBody]BlockchainSettingsUpdateRequest request)
         {
             BlockchainSetting settings = MapToDomain(request);
@@ -149,6 +153,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> RemoveAsync([FromRoute]string type)
         {
             try

@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Autofac.Features.AttributeFilters;
 using Common.Log;
 using Lykke.Service.BlockchainSettings.AzureRepositories.Repositories;
+using Lykke.Service.BlockchainSettings.Core;
 using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
@@ -29,6 +31,12 @@ namespace Lykke.Service.BlockchainSettings.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            //_services.AddDistributedRedisCache(options =>
+            //{
+            //    options.Configuration = _settings.CurrentValue.RedisConfiguration;
+            //    options.InstanceName = _settings.CurrentValue.InstanceName;
+            //});
+
             var redis = new RedisCache(new RedisCacheOptions
             {
                 Configuration = _settings.CurrentValue.RedisConfiguration,
@@ -37,11 +45,17 @@ namespace Lykke.Service.BlockchainSettings.Modules
 
             builder.RegisterInstance(redis)
                 .As<IDistributedCache>()
+                .Keyed<IDistributedCache>(Constants.CacheServiceKey)
                 .SingleInstance();
+
+            //builder.RegisterInstance(redis)
+            //    .As<IDistributedCache>()
+            //    .SingleInstance();
 
             builder.RegisterType<BlockchainSettingsServiceCached>()
                 .As<IBlockchainSettingsServiceCached>()
-                .SingleInstance();
+                .SingleInstance()
+                .WithAttributeFiltering();
 
             builder.Populate(_services);
         }

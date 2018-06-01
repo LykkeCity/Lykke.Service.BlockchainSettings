@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Autofac.Features.AttributeFilters;
 using Microsoft.Extensions.Caching.Distributed;
 using Lykke.Service.BlockchainSettings.Core;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
@@ -15,7 +16,7 @@ namespace Lykke.Service.BlockchainSettings.Shared.Cache
         private const string _settingsCacheKey = "SettingsKey";
 
         public BlockchainSettingsServiceCached(IBlockchainSettingsService blockchainSettingsService,
-            IDistributedCache distributedCache)
+            [KeyFilter(Constants.CacheServiceKey)]IDistributedCache distributedCache)
         {
             _blockchainSettingsService = blockchainSettingsService;
             _distributedCache = distributedCache;
@@ -94,7 +95,7 @@ namespace Lykke.Service.BlockchainSettings.Shared.Cache
         {
             DistributedCacheEntryOptions options = new DistributedCacheEntryOptions()
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(12)
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(12),
             };
 
             return options;

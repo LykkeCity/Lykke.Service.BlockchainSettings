@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.BlockchainSettings.Shared.Security;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -36,7 +38,16 @@ namespace Lykke.Service.BlockchainSettings.Shared.Attributes
                     return base.OnActionExecutionAsync(context, next);
             }
 
-            context.Result = new UnauthorizedResult();
+            var errorResponse = new ErrorResponse()
+            {
+                ErrorMessage = $"Api Key with {_apiKeyAccessType} access should be provided"
+            };
+
+            context.Result = new ContentResult()
+            {
+                StatusCode = StatusCodes.Status401Unauthorized,
+                Content = Newtonsoft.Json.JsonConvert.SerializeObject(errorResponse)
+            };
 
             return Task.FromResult(0);
         }
