@@ -8,18 +8,12 @@
     <RootNamespace>Lykke.Service.BlockchainSettings</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup>
     <DocumentationFile>bin\Release\netcoreapp2.0\Lykke.Service.BlockchainSettings.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\Lykke.Service.BlockchainSettings.xml</DocumentationFile>
-    <NoWarn>1701;1702;1705;1591</NoWarn>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  
   <ItemGroup>
     <None Update="Dockerfile">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
