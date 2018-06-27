@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.0</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+
+        <StartupObject></StartupObject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Lykke.HttpClientGenerator" Version="1.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore" Version="2.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.0.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0" />
+        <PackageReference Include="Moq" Version="4.8.2" />
+        <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
+        <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
+        <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.7.0" />
+        <PackageReference Include="Lykke.Logs" Version="4.3.0" />
+        <PackageReference Include="Lykke.MonitoringServiceApiCaller" Version="1.2.2" />
+        <PackageReference Include="Lykke.Service.BlockchainApi.Client" Version="17.1.1" />
+        <PackageReference Include="Lykke.Service.Session" Version="1.0.33" />
+        <PackageReference Include="Lykke.SettingsReader" Version="2.3.1" />
+        <PackageReference Include="Lykke.SlackNotification.AzureQueue" Version="2.0.4" />
+        <PackageReference Include="MessagePack" Version="1.7.3.4" />
+        <PackageReference Include="Microsoft.AspNetCore" Version="2.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.0.1" />
+        <PackageReference Include="Refit" Version="4.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\client\Lykke.Service.BlockchainSettings.Client\Lykke.Service.BlockchainSettings.Client.csproj" />
+      <ProjectReference Include="..\..\src\Lykke.Service.BlockchainSettings.Core\Lykke.Service.BlockchainSettings.Core.csproj" />
+      <ProjectReference Include="..\..\src\Lykke.Service.BlockchainSettings.Shared\Lykke.Service.BlockchainSettings.Shared.csproj" />
+      <ProjectReference Include="..\..\src\Lykke.Service.BlockchainSettings\Lykke.Service.BlockchainSettings.csproj" />
+    </ItemGroup>
+
+</Project>
