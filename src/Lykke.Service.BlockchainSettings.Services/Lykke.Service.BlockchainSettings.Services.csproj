@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>Lykke.Service.BlockchainSettings.Services</AssemblyName>
+    <RootNamespace>Lykke.Service.BlockchainSettings.Services</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lykke.Common" Version="6.6.0" />
+    <PackageReference Include="Lykke.Service.BlockchainApi.Client" Version="17.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.BlockchainSettings.Core\Lykke.Service.BlockchainSettings.Core.csproj" />
+  </ItemGroup>
+
+</Project>
