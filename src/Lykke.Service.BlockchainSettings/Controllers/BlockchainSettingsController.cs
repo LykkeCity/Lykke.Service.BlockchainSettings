@@ -1,8 +1,8 @@
 ﻿using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
 using Lykke.Service.BlockchainSettings.Core.Exceptions;
-using Lykke.Service.BlockchainSettings.Models.Requests;
-using Lykke.Service.BlockchainSettings.Models.Responses;
+using Lykke.Service.BlockchainSettings.Contract.Requests;
+using Lykke.Service.BlockchainSettings.Contract.Responses;
 using Lykke.Service.BlockchainSettings.Shared.Attributes;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;

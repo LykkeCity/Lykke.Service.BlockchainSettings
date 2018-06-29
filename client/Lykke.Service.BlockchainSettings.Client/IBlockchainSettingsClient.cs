@@ -5,8 +5,8 @@ using Lykke.Common.Api.Contract.Responses;
 using Lykke.HttpClientGenerator.Caching;
 using Lykke.Service.BlockchainSettings.Client.Exception;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
-using Lykke.Service.BlockchainSettings.Models.Requests;
-using Lykke.Service.BlockchainSettings.Models.Responses;
+using Lykke.Service.BlockchainSettings.Contract.Requests;
+using Lykke.Service.BlockchainSettings.Contract.Responses;
 using Refit;
 
 namespace Lykke.Service.BlockchainSettings.Client
