@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Lykke.Service.BlockchainSettings.Contract\Lykke.Service.BlockchainSettings.Contract.csproj" />
+    <ProjectReference Include="..\..\client\Lykke.Service.BlockchainSettings.Contract\Lykke.Service.BlockchainSettings.Contract.csproj" />
   </ItemGroup>
   <ItemGroup Label="dotnet pack instructions">
     <Content Include="$(OutputPath)Lykke.Service.BlockchainSettings.Contract.dll">
