@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Console.Models;
-using Lykke.Service.BlockchainSettings.Models.Requests;
+using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace Lykke.Service.BlockchainSettings.Console

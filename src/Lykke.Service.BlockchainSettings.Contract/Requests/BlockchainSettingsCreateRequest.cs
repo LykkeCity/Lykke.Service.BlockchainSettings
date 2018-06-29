@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace Lykke.Service.BlockchainSettings.Models.Requests
+namespace Lykke.Service.BlockchainSettings.Contract.Requests
 {
     [DataContract]
     public class BlockchainSettingsCreateRequest

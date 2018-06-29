@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Lykke.Service.BlockchainSettings.Models.Responses
+namespace Lykke.Service.BlockchainSettings.Contract.Responses
 {
     [DataContract]
     public class BlockchainSettingsCollectionResponse
