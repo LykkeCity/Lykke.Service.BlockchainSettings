@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.7.0" />
-    <PackageReference Include="Lykke.Logs" Version="4.3.0" />
+    <PackageReference Include="Lykke.Logs" Version="4.3.2" />
     <PackageReference Include="Lykke.MonitoringServiceApiCaller" Version="1.2.2" />
     <PackageReference Include="Lykke.Service.BlockchainApi.Client" Version="17.1.1" />
     <PackageReference Include="Lykke.Service.Session" Version="1.0.33" />
