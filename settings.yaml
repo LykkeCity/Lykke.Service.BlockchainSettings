@@ -20,7 +20,10 @@ BlockchainSettingsService:
             types:
                 - Redis
                 - Tag
-        InstanceName: BlockchainSettings
+        InstanceName: 
+            settings-key: BlockchainSettingsService-RedisInstanceName
+            types:
+                - Tag
     MonitoringServiceClient:
         MonitoringServiceUrl:
             settings-key: BlockchainSettingsService-MonitoringUrl
@@ -34,5 +37,11 @@ BlockchainSettingsService:
                 types: 
                     - AzureTableStorage
                     - Tag
-            QueueName: slack-notifications
-        ThrottlingLimitSeconds: 60
+            QueueName: 
+                settings-key: BlockchainSettingsService-QueueName
+                types:
+                    - Tag
+        ThrottlingLimitSeconds: 
+            settings-key: BlockchainSettingsService-ThrottlingLimitSeconds
+            types:
+                - Tag
