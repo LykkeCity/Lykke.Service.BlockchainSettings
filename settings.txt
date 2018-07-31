@@ -1,29 +1,38 @@
-{
-  "BlockchainSettingsService": 
-  {
-    "Keys": {BlockchainSettingsService-Keys}[JsonArray],
-    "Db": 
-    {
-      "LogsConnectionString": {BlockchainSettingsService-Db-Logs}[AzureTableStorage, Tag],
-      "DataConnectionString": {BlockchainSettingsService-Db-Data}[AzureTableStorage, Tag]
-    },
-    "RedisCache": 
-    {
-      "RedisConfiguration": {BlockchainSettingsService-Redis}[Redis, Tag],
-      "InstanceName": "BlockchainSettings"
-    }
-  },
-  "MonitoringServiceClient": 
-  {
-    "MonitoringServiceUrl": {BlockchainSettingsService-MonitoringUrl}[AzureTableStorage, Tag]
-  },
-  "SlackNotifications": 
-  {
-    "AzureQueue": 
-    {
-      "ConnectionString": {BlockchainSettingsService-Slack-Azure}[AzureTableStorage, Tag],
-      "QueueName": "slack-notifications"
-    },
-    "ThrottlingLimitSeconds": 60
-  }
-}
+BlockchainSettingsService: 
+    Keys:
+        settings-key: BlockchainSettingsService-Keys
+        types: 
+            - JsonArray
+    Db: 
+        LogsConnectionString: 
+            settings-key: BlockchainSettingsService-Db-Logs
+            types: 
+                - AzureTableStorage
+                - Tag
+        DataConnectionString:
+            settings-key: BlockchainSettingsService-Db-Data
+            types:
+                - AzureTableStorage
+                - Tag
+    RedisCache: 
+        RedisConfiguration: 
+            settings-key: BlockchainSettingsService-Redis
+            types:
+                - Redis
+                - Tag
+        InstanceName: BlockchainSettings
+    MonitoringServiceClient:
+        MonitoringServiceUrl:
+            settings-key: BlockchainSettingsService-MonitoringUrl
+            types:
+                - AzureTableStorage 
+                - Tag
+    SlackNotifications: 
+        AzureQueue:
+            ConnectionString:
+                settings-key: BlockchainSettingsService-Slack-Azure
+                types: 
+                    - AzureTableStorage
+                    - Tag
+            QueueName: slack-notifications
+        ThrottlingLimitSeconds: 60
