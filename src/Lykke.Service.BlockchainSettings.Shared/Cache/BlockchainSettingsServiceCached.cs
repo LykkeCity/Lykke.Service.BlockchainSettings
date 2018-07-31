@@ -87,7 +87,7 @@ namespace Lykke.Service.BlockchainSettings.Shared.Cache
         public async Task UpdateAsync(BlockchainSetting settings)
         {
             await _blockchainSettingsService.UpdateAsync(settings);
-            await _distributedCache.SetAsync(GetCacheKey(settings.Type), CacheSerializer.Serialize(settings), GetCacheOptions());
+            await _distributedCache.RemoveAsync(GetCacheKey(settings.Type));
             await _distributedCache.RemoveAsync(_settingsCacheKey);
         }
 
