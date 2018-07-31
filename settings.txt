@@ -1,0 +1,29 @@
+{
+  "BlockchainSettingsService": 
+  {
+    "Keys": {BlockchainSettingsService-Keys}[JsonArray],
+    "Db": 
+    {
+      "LogsConnectionString": {BlockchainSettingsService-Db-Logs}[AzureTableStorage, Tag],
+      "DataConnectionString": {BlockchainSettingsService-Db-Data}[AzureTableStorage, Tag]
+    },
+    "RedisCache": 
+    {
+      "RedisConfiguration": {BlockchainSettingsService-Redis}[Redis, Tag],
+      "InstanceName": "BlockchainSettings"
+    }
+  },
+  "MonitoringServiceClient": 
+  {
+    "MonitoringServiceUrl": {BlockchainSettingsService-MonitoringUrl}[AzureTableStorage, Tag]
+  },
+  "SlackNotifications": 
+  {
+    "AzureQueue": 
+    {
+      "ConnectionString": {BlockchainSettingsService-Slack-Azure}[AzureTableStorage, Tag],
+      "QueueName": "slack-notifications"
+    },
+    "ThrottlingLimitSeconds": 60
+  }
+}
