@@ -75,7 +75,7 @@ namespace Lykke.Service.BlockchainSettings.Console
             var text = await File.ReadAllTextAsync(pathToJsonFileAbsolute);
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<BlockchainsList>(text);
             var blockchainSettingsControllerFactory = new BlockchainSettingsControllerFactory();
-            var client = blockchainSettingsControllerFactory.CreateNew(blockchainSettingsUrl, apiKey);
+            var (client, cacheManager) = blockchainSettingsControllerFactory.CreateNew(blockchainSettingsUrl, apiKey);
 
             try
             {
@@ -101,6 +101,15 @@ namespace Lykke.Service.BlockchainSettings.Console
                 if (existing != null)
                 {
                     System.Console.WriteLine($"{item.Type} setting already exists");
+                    await client.UpdateAsync(new BlockchainSettingsUpdateRequest()
+                    {
+                        ETag = existing.ETag,
+                        Type = item.Type,
+                        HotWalletAddress = item.HotWalletAddress,
+                        SignServiceUrl = item.SignServiceUrl,
+                        ApiUrl = item.ApiUrl
+                    });
+
                     continue;
                 }
 
@@ -115,27 +124,5 @@ namespace Lykke.Service.BlockchainSettings.Console
                 System.Console.WriteLine($"{item.Type} has been processed");
             }
         }
-
-        //private static T GetUserInputWithWalidation<T>(string typeOfInput,
-        //    string messageOnWrongInput,
-        //    Func<string, (bool IsValid, T Result)> validFunc)
-        //{
-        //    string input = "";
-
-        //    do
-        //    {
-        //        System.Console.Write($"{typeOfInput}: ");
-        //        input = System.Console.ReadLine();
-        //        var validationResult = validFunc(input);
-
-        //        if (validationResult.IsValid)
-        //        {
-        //            return validationResult.Result;
-        //        }
-
-        //        System.Console.WriteLine($"Try Again! Error: {validationResult.Result.ToString()}");
-
-        //    } while (true);
-        //}
     }
 }
