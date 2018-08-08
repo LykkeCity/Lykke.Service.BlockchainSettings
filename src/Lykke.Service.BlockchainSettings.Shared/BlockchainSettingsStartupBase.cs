@@ -82,6 +82,7 @@ namespace Lykke.Service.BlockchainSettings.Shared
                 app.UseLykkeForwardedHeaders();
                 app.UseLykkeMiddleware("BlockchainSettings", ex => new { Message = "Technical problem" });
 
+                app.UseStaticFiles();
                 app.UseMvc();
                 app.UseSwagger(c =>
                 {
@@ -92,7 +93,6 @@ namespace Lykke.Service.BlockchainSettings.Shared
                     x.RoutePrefix = "swagger/ui";
                     x.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 });
-                app.UseStaticFiles();
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());
                 appLifetime.ApplicationStopping.Register(() => StopApplication().GetAwaiter().GetResult());
