@@ -51,7 +51,7 @@ namespace Lykke.Service.BlockchainSettings.Shared
                         options.SerializerSettings.ContractResolver =
                             new Newtonsoft.Json.Serialization.DefaultContractResolver();
                     });
-
+                
                 services.AddSwaggerGen(options =>
                 {
                     options.DefaultLykkeConfiguration("v1", "BlockchainSettings API");
