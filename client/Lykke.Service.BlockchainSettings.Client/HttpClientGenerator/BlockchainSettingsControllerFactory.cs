@@ -10,11 +10,11 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
 {
     public class BlockchainSettingsControllerFactory : IBlockchainSettingsControllerFactory
     {
-        public IBlockchainSettingsClient CreateNew(BlockchainSettingsServiceClientSettings settings,
+        public (IBlockchainSettingsClient, IClientCacheManager) CreateNew(BlockchainSettingsServiceClientSettings settings,
             bool withCaching = true,
             params DelegatingHandler[] handlers)
         {
-            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, withCaching, handlers).Item1;
+            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, withCaching, handlers);
         }
 
         public (IBlockchainSettingsClient, IClientCacheManager) CreateNew(string url, string apiKey, bool withCaching = true, params DelegatingHandler[] handlers)
@@ -25,7 +25,15 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
                 .WithAdditionalDelegatingHandler(new ResponseHandler());
 
             if (withCaching)
+            {
+                //explicit strategy declaration
                 builder.WithCachingStrategy(new AttributeBasedCachingStrategy());
+            }
+            else
+            {
+                //By default it is AttributeBasedCachingStrategy, so if no caching turn it off
+                builder.WithoutCaching();
+            }
 
             foreach (var handler in handlers)
             {

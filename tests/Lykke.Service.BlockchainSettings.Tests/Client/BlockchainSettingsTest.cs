@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
-using JetBrains.Annotations;
-using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHandlers;
 using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
@@ -21,26 +12,30 @@ using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.Service.BlockchainSettings.Tests.Client.Settings;
 using Lykke.Service.BlockchainSettings.Tests.Fakes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Refit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Client
 {
 
     //Naming: MethodName__TestCase__ExpectedResult
-    [TestClass]
+    [TestFixture]
     public class BlockchainSettingsTest : BlockchainSettingsTestBase
     {
         public const string ReadKey = "read";
         public const string WriteKey = "write";
         public const string ReadWriteKey = "default";
 
-        [TestMethod]
-        public async Task GetAllSettings__Called__Returns()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetAllSettings__Called__Returns(bool cacheEnabled)
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));
-            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", true,
+            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", cacheEnabled,
                 new RequestInterceptorHandler(fixture.Client));
             var allSettings = await client.GetAllSettingsAsync();
 
@@ -48,7 +43,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             Assert.IsTrue(allSettings.Collection.Count()  == 1);
         }
 
-        [TestMethod]
+        [Test]
         public async Task GetAllSettings__CalledAfterAdd__CouldBeInvalidated()
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));

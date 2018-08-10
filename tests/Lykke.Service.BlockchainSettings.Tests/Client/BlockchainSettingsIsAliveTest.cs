@@ -5,24 +5,26 @@ using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHand
 using Lykke.Service.BlockchainSettings.Core.Services;
 using Lykke.Service.BlockchainSettings.Tests.Client.Settings;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Client
 {
 
     //Naming: MethodName__TestCase__ExpectedResult
-    [TestClass]
+    [TestFixture]
     public class BlockchainSettingsIsAliveTest : BlockchainSettingsTestBase
     {
-        [TestMethod]
-        public async Task IsAlive__Called__ReturnsResult()
+        //With enabled and disabled cache
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task IsAlive__Called__ReturnsResult(bool cacheEnabled)
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_IsAlive__Called__ReturnsResult));
-            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", true,
+            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", cacheEnabled,
                 new RequestInterceptorHandler(fixture.Client));
             var isAliveResponse = await client.GetIsAliveAsync();
 
