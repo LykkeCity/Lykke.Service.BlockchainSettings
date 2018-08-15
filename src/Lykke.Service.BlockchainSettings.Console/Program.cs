@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.HttpClientGenerator.Caching;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Console.Models;
 using Lykke.Service.BlockchainSettings.Contract.Requests;
@@ -74,8 +75,9 @@ namespace Lykke.Service.BlockchainSettings.Console
 
             var text = await File.ReadAllTextAsync(pathToJsonFileAbsolute);
             var list = Newtonsoft.Json.JsonConvert.DeserializeObject<BlockchainsList>(text);
-            var blockchainSettingsControllerFactory = new BlockchainSettingsControllerFactory();
-            var (client, cacheManager) = blockchainSettingsControllerFactory.CreateNew(blockchainSettingsUrl, apiKey);
+            var blockchainSettingsClientFactory = new BlockchainSettingsClientFactory();
+            var cacheManager = new ClientCacheManager();
+            var client  = blockchainSettingsClientFactory.CreateNew(blockchainSettingsUrl, apiKey, true, cacheManager);
 
             try
             {

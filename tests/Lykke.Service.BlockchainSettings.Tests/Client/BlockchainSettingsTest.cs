@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.HttpClientGenerator.Caching;
 using NUnit.Framework;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Client
@@ -35,7 +36,8 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public async Task GetAllSettings__Called__Returns(bool cacheEnabled)
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));
-            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", cacheEnabled,
+            var cacheManager = new ClientCacheManager();
+            var client = factory.CreateNew("http://localhost", "default", cacheEnabled, cacheManager,
                 new RequestInterceptorHandler(fixture.Client));
             var allSettings = await client.GetAllSettingsAsync();
 
@@ -47,7 +49,8 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public async Task GetAllSettings__CalledAfterAdd__CouldBeInvalidated()
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));
-            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", true,
+            var cacheManager = new ClientCacheManager();
+            var client = factory.CreateNew("http://localhost", "default", true, cacheManager,
                 new RequestInterceptorHandler(fixture.Client));
 
             var allSettings = await client.GetAllSettingsAsync();

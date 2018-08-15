@@ -9,6 +9,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lykke.HttpClientGenerator.Caching;
 using NUnit.Framework;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Client
@@ -24,7 +25,8 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public async Task IsAlive__Called__ReturnsResult(bool cacheEnabled)
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_IsAlive__Called__ReturnsResult));
-            var (client, cacheManager) = factory.CreateNew("http://localhost", "default", cacheEnabled,
+            var cacheManager = new ClientCacheManager();
+            var client = factory.CreateNew("http://localhost", "default", cacheEnabled, cacheManager,
                 new RequestInterceptorHandler(fixture.Client));
             var isAliveResponse = await client.GetIsAliveAsync();
 

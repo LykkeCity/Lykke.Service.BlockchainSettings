@@ -7,11 +7,11 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
     public class BlockchainSettingsTestBase
     {
         /// <param name="containerRegistrationWrapper">Type which implements IRegistrationWrapper</param>
-        protected (BlockchainSettingsControllerFactory, TestFixture) GenerateControllerFactoryWithFixture(Type containerRegistrationWrapper)
+        protected (BlockchainSettingsClientFactory, TestFixture) GenerateControllerFactoryWithFixture(Type containerRegistrationWrapper)
         {
             var startupProxyType = TestHelper.GenerateStartupProxyType(containerRegistrationWrapper);
             var fixture = new TestFixture(startupProxyType, typeof(TestStartup).Assembly, typeof(Startup).Assembly);
-            var factory = new BlockchainSettingsControllerFactory();
+            var factory = new BlockchainSettingsClientFactory();
 
             return (factory, fixture);
         }

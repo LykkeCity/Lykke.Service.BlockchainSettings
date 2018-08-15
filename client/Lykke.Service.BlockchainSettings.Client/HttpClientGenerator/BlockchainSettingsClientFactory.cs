@@ -8,18 +8,19 @@ using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHand
 
 namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
 {
-    public class BlockchainSettingsControllerFactory : IBlockchainSettingsControllerFactory
+    public class BlockchainSettingsClientFactory : IBlockchainSettingsClientFactory
     {
-        public (IBlockchainSettingsClient, IClientCacheManager) CreateNew(BlockchainSettingsServiceClientSettings settings,
+        public IBlockchainSettingsClient CreateNew(BlockchainSettingsServiceClientSettings settings,
             bool withCaching = true,
+            IClientCacheManager clientCacheManager = null,
             params DelegatingHandler[] handlers)
         {
-            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, withCaching, handlers);
+            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, withCaching, clientCacheManager, handlers);
         }
 
-        public (IBlockchainSettingsClient, IClientCacheManager) CreateNew(string url, string apiKey, bool withCaching = true, params DelegatingHandler[] handlers)
+        public IBlockchainSettingsClient CreateNew(string url, string apiKey, bool withCaching = true,
+            IClientCacheManager clientCacheManager = null, params DelegatingHandler[] handlers)
         {
-            IClientCacheManager clientCacheManager = new ClientCacheManager();
             var builder = new HttpClientGeneratorBuilder(url)
                 .WithAdditionalDelegatingHandler(new ApiKeyHeaderHandler(apiKey))
                 .WithAdditionalDelegatingHandler(new ResponseHandler());
@@ -40,9 +41,10 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
                 builder.WithAdditionalDelegatingHandler(handler);
             }
 
+            clientCacheManager = clientCacheManager ?? new ClientCacheManager();
             var httpClientGenerator = builder.Create(clientCacheManager);
 
-            return (httpClientGenerator.Generate<IBlockchainSettingsClient>(), clientCacheManager);
+            return httpClientGenerator.Generate<IBlockchainSettingsClient>();
         }
     }
 }
