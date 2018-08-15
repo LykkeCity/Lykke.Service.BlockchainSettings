@@ -40,6 +40,7 @@ namespace Lykke.Service.BlockchainSettings.Modules
                 string.IsNullOrEmpty(settingsCurrentValue.InstanceName) ||
                 string.IsNullOrEmpty(settingsCurrentValue.RedisConfiguration))
             {
+                //InMemory
                 var inMemoryCacheOptions = Options.Create(new MemoryDistributedCacheOptions()
                 {
                 });
@@ -48,10 +49,13 @@ namespace Lykke.Service.BlockchainSettings.Modules
             }
             else
             {
+                //Redis
                 cache = new RedisCache(new RedisCacheOptions
                 {
                     Configuration = _settings.CurrentValue.RedisConfiguration,
-                    InstanceName = _settings.CurrentValue.InstanceName
+                    InstanceName = _settings.CurrentValue.InstanceName != null
+                        ? $"BlockchainSettings:{_settings.CurrentValue.InstanceName}:"
+                        : "BlockchainSettings:"
                 });
             }
 

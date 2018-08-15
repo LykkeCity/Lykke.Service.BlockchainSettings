@@ -13,7 +13,7 @@ namespace Lykke.Service.BlockchainSettings.Console
 {
     class Program
     {
-        private const string PathToJsonFileAbsolute = "pathToJsonFileAbsolute";
+        private const string UrlToBlockchainIntegrationService = "urlToBlockchainIntegrationService";
         private const string BlockchainSettingsUrl = "blockchainSettingsUrl";
         private const string ApiKey = "apiKey";
 
@@ -26,8 +26,10 @@ namespace Lykke.Service.BlockchainSettings.Console
 
             var arguments = new Dictionary<string, CommandArgument>
             {
-                { PathToJsonFileAbsolute, application.Argument(PathToJsonFileAbsolute, "Path to blockchain settings json config.") },
-                { BlockchainSettingsUrl, application.Argument(BlockchainSettingsUrl, "Url of a blockchain settings service.") },
+                { UrlToBlockchainIntegrationService,
+                    application.Argument(UrlToBlockchainIntegrationService, "Url to blockchain integration service.") },
+                { BlockchainSettingsUrl,
+                    application.Argument(BlockchainSettingsUrl, "Url of a blockchain settings service.") },
                 { ApiKey, application.Argument(BlockchainSettingsUrl, "Api key of a blockchain settings service.") },
             };
 
@@ -44,7 +46,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                     {
                         await CreateSettingsAsync
                         (
-                            arguments[PathToJsonFileAbsolute].Value,
+                            arguments[UrlToBlockchainIntegrationService].Value,
                             arguments[BlockchainSettingsUrl].Value,
                             arguments[ApiKey].Value
                         );
@@ -65,16 +67,11 @@ namespace Lykke.Service.BlockchainSettings.Console
             application.Execute(args);
         }
 
-        private static async Task CreateSettingsAsync(string pathToJsonFileAbsolute, string blockchainSettingsUrl, string apiKey)
+        private static async Task CreateSettingsAsync(string urlToSettingsWithBlockchainIntegrationSection, string blockchainSettingsUrl, string apiKey)
         {
-            if (!File.Exists(pathToJsonFileAbsolute))
-            {
-                System.Console.WriteLine($"File at {pathToJsonFileAbsolute} does not exist");
-                return;
-            }
-
-            var text = await File.ReadAllTextAsync(pathToJsonFileAbsolute);
-            var list = Newtonsoft.Json.JsonConvert.DeserializeObject<BlockchainsList>(text);
+            var uri = new Uri(urlToSettingsWithBlockchainIntegrationSection);
+            var appSettings = Lykke.SettingsReader.SettingsReader.ReadGeneralSettings<AppSettings>(uri);
+            var list = appSettings.BlockchainsIntegration.Blockchains.ToList();
             var blockchainSettingsClientFactory = new BlockchainSettingsClientFactory();
             var cacheManager = new ClientCacheManager();
             var client  = blockchainSettingsClientFactory.CreateNew(blockchainSettingsUrl, apiKey, true, cacheManager);
@@ -94,7 +91,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                 return;
             }
 
-            foreach (var item in list?.Blockchains)
+            foreach (var item in list)
             {
                 System.Console.WriteLine($"Processing {item.Type}");
 
