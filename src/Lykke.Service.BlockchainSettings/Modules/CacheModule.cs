@@ -9,8 +9,10 @@ using Lykke.Service.BlockchainSettings.Shared.Cache;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.Redis;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Lykke.Service.BlockchainSettings.Modules
 {
@@ -31,26 +33,32 @@ namespace Lykke.Service.BlockchainSettings.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-            //_services.AddDistributedRedisCache(options =>
-            //{
-            //    options.Configuration = _settings.CurrentValue.RedisConfiguration;
-            //    options.InstanceName = _settings.CurrentValue.InstanceName;
-            //});
+            var settingsCurrentValue = _settings.CurrentValue;
+            IDistributedCache cache = null;
 
-            var redis = new RedisCache(new RedisCacheOptions
+            if (settingsCurrentValue == null ||
+                string.IsNullOrEmpty(settingsCurrentValue.InstanceName) ||
+                string.IsNullOrEmpty(settingsCurrentValue.RedisConfiguration))
             {
-                Configuration = _settings.CurrentValue.RedisConfiguration,
-                InstanceName = _settings.CurrentValue.InstanceName
-            });
+                var inMemoryCacheOptions = Options.Create(new MemoryDistributedCacheOptions()
+                {
+                });
 
-            builder.RegisterInstance(redis)
+                cache = new MemoryDistributedCache(inMemoryCacheOptions);
+            }
+            else
+            {
+                cache = new RedisCache(new RedisCacheOptions
+                {
+                    Configuration = _settings.CurrentValue.RedisConfiguration,
+                    InstanceName = _settings.CurrentValue.InstanceName
+                });
+            }
+
+            builder.RegisterInstance(cache)
                 .As<IDistributedCache>()
                 .Keyed<IDistributedCache>(Constants.CacheServiceKey)
                 .SingleInstance();
-
-            //builder.RegisterInstance(redis)
-            //    .As<IDistributedCache>()
-            //    .SingleInstance();
 
             builder.RegisterType<BlockchainSettingsServiceCached>()
                 .As<IBlockchainSettingsServiceCached>()
