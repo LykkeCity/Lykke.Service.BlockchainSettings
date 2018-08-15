@@ -37,7 +37,6 @@ namespace Lykke.Service.BlockchainSettings.Modules
             IDistributedCache cache = null;
 
             if (settingsCurrentValue == null ||
-                string.IsNullOrEmpty(settingsCurrentValue.InstanceName) ||
                 string.IsNullOrEmpty(settingsCurrentValue.RedisConfiguration))
             {
                 //InMemory
