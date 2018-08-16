@@ -104,30 +104,14 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
 
                 var blockchainValidationService = new Mock<IBlockchainValidationService>();
                 blockchainValidationService.Setup(x =>
-                        x.ValidateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                        x.ValidateHotwalletAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                          .Returns(Task.FromResult(true));
+                blockchainValidationService.Setup(x =>
+                        x.ValidateServiceUrlAsync(It.IsAny<string>()))
+                    .Returns(Task.FromResult(true));
                 var blockchainSettingsRepository = new BlockchainSettingRepositoryFake(listSettings);
                 var blockchainSettingsService = new BlockchainSettingsService(blockchainSettingsRepository, 
                     blockchainValidationService.Object);
-                //var blockchainSettingsService = new Mock<IBlockchainSettingsService>();
-                //blockchainSettingsService.Setup(x => x.GetAllAsync())
-                //    .Returns(Task.FromResult((IEnumerable<BlockchainSetting>)(new List<BlockchainSetting>()
-                //    {
-                //        ethClassicSetting
-                //    })));
-
-                //blockchainSettingsService.Setup(x => x.GetAsync(It.Is<string>(y => y == "EthereumClassic")))
-                //    .Returns(Task.FromResult(ethClassicSetting));
-
-                //blockchainSettingsService.Setup(x => x.CreateAsync(It.IsAny<BlockchainSetting>()))
-                //    .Returns(Task.FromResult(0));
-
-                //blockchainSettingsService.Setup(x => x.RemoveAsync(It.IsAny<string>()))
-                //    .Returns(Task.FromResult(0));
-
-                //blockchainSettingsService.Setup(x => x.UpdateAsync(It.IsAny<BlockchainSetting>()))
-                //    .Returns(Task.FromResult(0));
-
                 var accessTokenService = new Mock<IAccessTokenService>();
                 accessTokenService.Setup(x => x.GetTokenAccess(It.Is<string>(y => y == BlockchainSettingsTest.ReadKey)))
                     .Returns(ApiKeyAccessType.Read);

@@ -15,7 +15,7 @@ namespace Lykke.Service.BlockchainSettings.Services
             _log = log.CreateComponentScope(nameof(BlockchainValidationService));
         }
 
-        public async Task<bool> ValidateAsync(string apiUrl, string type, string address)
+        public async Task<bool> ValidateHotwalletAsync(string apiUrl, string type, string address)
         {
             var isAddressValid = false;
 
@@ -30,10 +30,30 @@ namespace Lykke.Service.BlockchainSettings.Services
             }
             catch (Exception e)
             {
-                _log.WriteInfo(nameof(ValidateAsync), $"{apiUrl}, {type}, {address}", "Could not check validity");
+                _log.WriteInfo(nameof(ValidateHotwalletAsync), $"{apiUrl}, {type}, {address}", "Could not check validity");
             }
 
             return isAddressValid;
+        }
+
+        public async Task<bool> ValidateServiceUrlAsync(string serviceUrl)
+        {
+            var isUrlValid = false;
+
+            try
+            {
+                using (var client = new Lykke.Service.BlockchainApi.Client.BlockchainApiClient(_log, serviceUrl, 3))
+                {
+                    var isAlive = await client.GetIsAliveAsync();
+                    isUrlValid = isAlive != null;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.WriteInfo(nameof(ValidateHotwalletAsync), $"{serviceUrl}", "Could not check api validity");
+            }
+
+            return isUrlValid;
         }
     }
 }
