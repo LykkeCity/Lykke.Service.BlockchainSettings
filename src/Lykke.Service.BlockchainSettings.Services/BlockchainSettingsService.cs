@@ -12,7 +12,7 @@ namespace Lykke.Service.BlockchainSettings.Services
         private readonly IBlockchainSettingsRepository _blockchainSettingsRepository;
         private readonly IBlockchainValidationService _blockchainValidationService;
 
-        public BlockchainSettingsService(IBlockchainSettingsRepository blockchainSettingsRepository, 
+        public BlockchainSettingsService(IBlockchainSettingsRepository blockchainSettingsRepository,
             IBlockchainValidationService blockchainValidationService)
         {
             _blockchainSettingsRepository = blockchainSettingsRepository;
@@ -22,10 +22,7 @@ namespace Lykke.Service.BlockchainSettings.Services
         /// <inheritdoc/>
         public async Task CreateAsync(BlockchainSetting settings)
         {
-            var isValid = await _blockchainValidationService.ValidateAsync(settings.ApiUrl, settings.Type, settings.HotWalletAddress);
-
-            if (!isValid)
-                throw new NotValidException($"Blockchain integration api({settings.ApiUrl}) states that {settings.HotWalletAddress} is not a valid address");
+            await ThrowOnNotValidHotWalletAddressAsync(settings.ApiUrl, settings.Type, settings.HotWalletAddress);
 
             await _blockchainSettingsRepository.CreateAsync(settings);
         }
@@ -59,7 +56,17 @@ namespace Lykke.Service.BlockchainSettings.Services
         /// <inheritdoc/>
         public async Task UpdateAsync(BlockchainSetting settings)
         {
+            await ThrowOnNotValidHotWalletAddressAsync(settings.ApiUrl, settings.Type, settings.HotWalletAddress);
+
             await _blockchainSettingsRepository.UpdateAsync(settings);
+        }
+
+        private async Task ThrowOnNotValidHotWalletAddressAsync(string apiUrl, string type, string hotWalletAddress)
+        {
+            var isValid = await _blockchainValidationService.ValidateAsync(apiUrl, type, hotWalletAddress);
+
+            if (!isValid)
+                throw new NotValidException($"Blockchain integration api({apiUrl}) states that {hotWalletAddress} is not a valid address");
         }
     }
 }

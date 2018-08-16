@@ -1,0 +1,36 @@
+BlockchainSettingsService: 
+    Keys:
+        settings-key: BlockchainSettingsService-Keys
+        types: 
+            - JsonArray
+    Db: 
+        LogsConnectionString: 
+            settings-key: BlockchainSettingsService-Db-Logs
+            types: 
+                - AzureTableStorage
+        DataConnectionString:
+            settings-key: BlockchainSettingsService-Db-Data
+            types:
+                - AzureTableStorage
+    RedisCache: 
+        RedisConfiguration: 
+            settings-key: BlockchainSettingsService-Redis
+            types:
+                - Redis
+        InstanceName: 
+            settings-key: BlockchainSettingsService-RedisInstanceName
+MonitoringServiceClient:
+    MonitoringServiceUrl:
+        settings-key: BlockchainSettingsService-MonitoringUrl
+        types:
+            - AzureTableStorage 
+SlackNotifications: 
+    AzureQueue:
+        ConnectionString:
+            settings-key: BlockchainSettingsService-Slack-Azure
+            types: 
+                - AzureTableStorage
+        QueueName: 
+            settings-key: BlockchainSettingsService-QueueName
+    ThrottlingLimitSeconds: 
+        settings-key: BlockchainSettingsService-ThrottlingLimitSeconds

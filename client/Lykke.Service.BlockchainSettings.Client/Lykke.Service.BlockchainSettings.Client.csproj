@@ -33,10 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lykke.Common" Version="6.6.0" />
-    <PackageReference Include="Lykke.HttpClientGenerator" Version="1.0.0" />
+    <PackageReference Include="Lykke.Common" Version="7.0.3" />
+    <PackageReference Include="Lykke.HttpClientGenerator" Version="2.1.2" />
     <PackageReference Include="Microsoft.Rest.ClientRuntime" Version="2.3.11" />
-    <PackageReference Include="Refit" Version="4.3.0" />
+    <PackageReference Include="Refit" Version="4.5.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +47,9 @@
       <Pack>true</Pack>
       <PackagePath>lib/netstandard2.0</PackagePath>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attributes\" />
   </ItemGroup>
 
 </Project>

@@ -1,35 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
-using JetBrains.Annotations;
-using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHandlers;
 using Lykke.Service.BlockchainSettings.Core.Services;
 using Lykke.Service.BlockchainSettings.Tests.Client.Settings;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Refit;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Lykke.HttpClientGenerator.Caching;
+using NUnit.Framework;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Client
 {
 
     //Naming: MethodName__TestCase__ExpectedResult
-    [TestClass]
+    [TestFixture]
     public class BlockchainSettingsIsAliveTest : BlockchainSettingsTestBase
     {
-        [TestMethod]
-        public void IsAlive__Called__ReturnsResult()
+        //With enabled and disabled cache
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task IsAlive__Called__ReturnsResult(bool cacheEnabled)
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_IsAlive__Called__ReturnsResult));
-            var client = factory.CreateNew("http://localhost", "default", true,
+            var cacheManager = new ClientCacheManager();
+            var client = factory.CreateNew("http://localhost", "default", cacheEnabled, cacheManager,
                 new RequestInterceptorHandler(fixture.Client));
-            var isAliveResponse = client.GetIsAliveAsync().Result;
+            var isAliveResponse = await client.GetIsAliveAsync();
 
             Assert.IsNotNull(isAliveResponse);
         }

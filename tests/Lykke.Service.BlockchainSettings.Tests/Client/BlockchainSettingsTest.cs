@@ -1,49 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
-using JetBrains.Annotations;
-using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator.DelegatingHandlers;
+using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
 using Lykke.Service.BlockchainSettings.Core.Services;
+using Lykke.Service.BlockchainSettings.Services;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
 using Lykke.Service.BlockchainSettings.Shared.Security;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.Service.BlockchainSettings.Tests.Client.Settings;
 using Lykke.Service.BlockchainSettings.Tests.Fakes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Refit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Lykke.HttpClientGenerator.Caching;
+using NUnit.Framework;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Client
 {
 
     //Naming: MethodName__TestCase__ExpectedResult
-    [TestClass]
+    [TestFixture]
     public class BlockchainSettingsTest : BlockchainSettingsTestBase
     {
         public const string ReadKey = "read";
         public const string WriteKey = "write";
         public const string ReadWriteKey = "default";
 
-        [TestMethod]
-        public void GetAllSettings__Called__Returns()
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task GetAllSettings__Called__Returns(bool cacheEnabled)
         {
             var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));
-            var client = factory.CreateNew("http://localhost", "default", true,
+            var cacheManager = new ClientCacheManager();
+            var client = factory.CreateNew("http://localhost", "default", cacheEnabled, cacheManager,
                 new RequestInterceptorHandler(fixture.Client));
-            var allSettings = client.GetAllSettingsAsync().Result;
+            var allSettings = await client.GetAllSettingsAsync();
 
             Assert.IsNotNull(allSettings.Collection);
             Assert.IsTrue(allSettings.Collection.Count()  == 1);
+        }
+
+        [Test]
+        public async Task GetAllSettings__CalledAfterAdd__CouldBeInvalidated()
+        {
+            var (factory, fixture) = GenerateControllerFactoryWithFixture(typeof(RegistrationWrapper_GetAllSettings__Called__Returns));
+            var cacheManager = new ClientCacheManager();
+            var client = factory.CreateNew("http://localhost", "default", true, cacheManager,
+                new RequestInterceptorHandler(fixture.Client));
+
+            var allSettings = await client.GetAllSettingsAsync();
+            await client.CreateAsync(new BlockchainSettingsCreateRequest()
+            {
+                HotWalletAddress = "ANY_ADDRESS_POSSIBLE",
+                Type = "TYPE_1",
+                SignServiceUrl = "http://fake.sign.com/",
+                ApiUrl = "http://fake.api.com/"
+            });
+            var allSettings2 = await client.GetAllSettingsAsync();
+            var allSettingsCountBeforeInvalidation = allSettings2.Collection.Count();
+            await cacheManager.InvalidateCacheAsync();
+            var allSettings3 = await client.GetAllSettingsAsync();
+
+            Assert.IsNotNull(allSettings.Collection);
+            Assert.IsNotNull(allSettings2.Collection);
+            Assert.IsNotNull(allSettings3.Collection);
+            Assert.IsTrue(allSettings.Collection.Count() == 1);
+            Assert.IsTrue(allSettingsCountBeforeInvalidation == 1);
+            Assert.IsTrue(allSettings3.Collection.Count() == 2);
         }
     }
 
@@ -69,25 +97,36 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
                     SignServiceUrl = "http://ethereum-classic-sign.lykke-service.com",
                     ApiUrl = "http://ethereum-classic-api.lykke-service.com"
                 };
-
-                var blockchainSettingsService = new Mock<IBlockchainSettingsService>();
-                blockchainSettingsService.Setup(x => x.GetAllAsync())
-                    .Returns(Task.FromResult((IEnumerable<BlockchainSetting>)(new List<BlockchainSetting>()
+                var listSettings = new List<BlockchainSetting>()
                     {
                         ethClassicSetting
-                    })));
+                    };
 
-                blockchainSettingsService.Setup(x => x.GetAsync(It.Is<string>(y => y == "EthereumClassic")))
-                    .Returns(Task.FromResult(ethClassicSetting));
+                var blockchainValidationService = new Mock<IBlockchainValidationService>();
+                blockchainValidationService.Setup(x =>
+                        x.ValidateAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                         .Returns(Task.FromResult(true));
+                var blockchainSettingsRepository = new BlockchainSettingRepositoryFake(listSettings);
+                var blockchainSettingsService = new BlockchainSettingsService(blockchainSettingsRepository, 
+                    blockchainValidationService.Object);
+                //var blockchainSettingsService = new Mock<IBlockchainSettingsService>();
+                //blockchainSettingsService.Setup(x => x.GetAllAsync())
+                //    .Returns(Task.FromResult((IEnumerable<BlockchainSetting>)(new List<BlockchainSetting>()
+                //    {
+                //        ethClassicSetting
+                //    })));
 
-                blockchainSettingsService.Setup(x => x.CreateAsync(It.IsAny<BlockchainSetting>()))
-                    .Returns(Task.FromResult(0));
+                //blockchainSettingsService.Setup(x => x.GetAsync(It.Is<string>(y => y == "EthereumClassic")))
+                //    .Returns(Task.FromResult(ethClassicSetting));
 
-                blockchainSettingsService.Setup(x => x.RemoveAsync(It.IsAny<string>()))
-                    .Returns(Task.FromResult(0));
+                //blockchainSettingsService.Setup(x => x.CreateAsync(It.IsAny<BlockchainSetting>()))
+                //    .Returns(Task.FromResult(0));
 
-                blockchainSettingsService.Setup(x => x.UpdateAsync(It.IsAny<BlockchainSetting>()))
-                    .Returns(Task.FromResult(0));
+                //blockchainSettingsService.Setup(x => x.RemoveAsync(It.IsAny<string>()))
+                //    .Returns(Task.FromResult(0));
+
+                //blockchainSettingsService.Setup(x => x.UpdateAsync(It.IsAny<BlockchainSetting>()))
+                //    .Returns(Task.FromResult(0));
 
                 var accessTokenService = new Mock<IAccessTokenService>();
                 accessTokenService.Setup(x => x.GetTokenAccess(It.Is<string>(y => y == BlockchainSettingsTest.ReadKey)))
@@ -99,7 +138,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
                 #endregion
 
                 BlockchainSettingsServiceCached cachedService = new BlockchainSettingsServiceCached(
-                    blockchainSettingsService.Object,
+                    blockchainSettingsService,
                     new DistributedCacheFake()
                 );
                 builder.RegisterInstance<IAccessTokenService>(accessTokenService.Object);

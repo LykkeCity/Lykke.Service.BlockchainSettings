@@ -1,54 +1,12 @@
 ﻿{
   "Blockchains": [
     {
-      "Type": "LiteCoin",
-      "ApiUrl": "http://litecoin-api.lykke-service.svc.cluster.local",
-      "SignServiceUrl": "http://litecoin-sign.lykke-service.svc.cluster.local",
-      "SignFacadeUrl": "http://blockchain-sign-service-litecoin.lykke-service.svc.cluster.local",
-      "SignFacadeApiKey": "C7E5B840-9F40-4E5D-9CEC-2233048051CD",
-      "HotWalletAddress": "n4PZ2BYZMcQHjWjUnCQYqVfCTUBozVUcYj"
-    },
-    {
-      "Type": "EthereumClassic",
-      "ApiUrl": "http://ethereum-classic-api.lykke-service.svc.cluster.local",
-      "SignServiceUrl": "http://ethereum-classic-sign-service.lykke-service.svc.cluster.local",
-      "HotWalletAddress": "0x08b93dd02c3c90f0e844ed710429db9939ff4d34"
-    },
-    {
-      "Type": "Zcash",
-      "ApiUrl": "http://zcash-api.lykke-service.svc.cluster.local",
-      "SignServiceUrl": "http://zcash-sign-service.lykke-service.svc.cluster.local",
-      "SignFacadeUrl": "http://blockchain-sign-service-zcash.lykke-service.svc.cluster.local",
-      "SignFacadeApiKey": "1c90642c-22f5-457c-80ef-298563b5a5a3",
-      "HotWalletAddress": "tmB72UTeA7hc5rm1jB5u1LdAp2aJ22SV9Gx"
-    },
-    {
-      "Type": "Dash",
-      "ApiUrl": "http://dash-api.lykke-service.svc.cluster.local",
-      "SignServiceUrl": "http://dash-sign.lykke-service.svc.cluster.local",
-      "SignFacadeUrl": "http://blockchain-sign-service-dash.lykke-service.svc.cluster.local",
-      "SignFacadeApiKey": "A7D238EB-F671-4F6B-A629-D6ED3D813C47",
-      "HotWalletAddress": "yYhvz5nP2qNFnU7eS96KEE5aVvxswCgEVg",
-      "Monitoring": {
-        "InProgressOperationAlarmPeriod": "00:01:00"
-      }
-    },
-    {
-      "Type": "BitcoinCash",
-      "ApiUrl": "http://bitcoincash-api.lykke-service.svc.cluster.local",
-      "SignServiceUrl": "http://bitcoincash-sign.lykke-service.svc.cluster.local",
-      "SignFacadeUrl": "http://blockchain-sign-service-bitcoincash.lykke-service.svc.cluster.local",
-      "SignFacadeApiKey": "12C3DF77-84F8-4B51-A5B4-74E663DFF9A6",
-      "HotWalletAddress": "mm1sshF2ft3nw7z6f7fwfvvueipACs2joL",
-      "Monitoring": {
-        "InProgressOperationAlarmPeriod": "00:01:00"
-      }
-    },
-    {
-      "Type": "Stellar",
-      "ApiUrl": "http://stellar-api-schnidlo.lykke-service.svc.cluster.local",
-      "SignServiceUrl": "http://stellar-sign-service-schnidlo.lykke-service.svc.cluster.local",
-      "HotWalletAddress": "GD7DG724K6MZUWA3WRQJNB7RWEVZQEHDWRCLLIIE6NS7PPPDAN4ZNZ7C",
+      "Type": "",
+      "ApiUrl": "",
+      "SignServiceUrl": "",
+      "HotWalletAddress": "",
+      "AreCashinsDisabled": ,
+      "AreCashoutsDisabled": ,
       "Monitoring": {
         "InProgressOperationAlarmPeriod": "00:01:00"
       }
