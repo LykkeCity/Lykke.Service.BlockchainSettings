@@ -22,7 +22,10 @@ namespace Lykke.Service.BlockchainSettings.Services
         /// <inheritdoc/>
         public async Task CreateAsync(BlockchainSetting settings)
         {
-            await ThrowOnNotValidHotWalletAddressAsync(settings.ApiUrl, settings.Type, settings.HotWalletAddress);
+            await ThrowOnNotValidHotWalletAddressAsync(settings.ApiUrl, 
+                settings.Type,
+                settings.HotWalletAddress, 
+                settings.SignServiceUrl);
 
             await _blockchainSettingsRepository.CreateAsync(settings);
         }
@@ -56,14 +59,30 @@ namespace Lykke.Service.BlockchainSettings.Services
         /// <inheritdoc/>
         public async Task UpdateAsync(BlockchainSetting settings)
         {
-            await ThrowOnNotValidHotWalletAddressAsync(settings.ApiUrl, settings.Type, settings.HotWalletAddress);
+            await ThrowOnNotValidHotWalletAddressAsync(settings.ApiUrl,
+                settings.Type,
+                settings.HotWalletAddress, 
+                settings.SignServiceUrl);
 
             await _blockchainSettingsRepository.UpdateAsync(settings);
         }
 
-        private async Task ThrowOnNotValidHotWalletAddressAsync(string apiUrl, string type, string hotWalletAddress)
+        private async Task ThrowOnNotValidHotWalletAddressAsync(string apiUrl, 
+            string type, 
+            string hotWalletAddress,
+            string signServiceUrl)
         {
-            var isValid = await _blockchainValidationService.ValidateAsync(apiUrl, type, hotWalletAddress);
+            var isValidApiService = await _blockchainValidationService.ValidateServiceUrlAsync(apiUrl);
+
+            if (!isValidApiService)
+                throw new NotValidException($"Blockchain integration api({apiUrl}) is not a valid Blockchain API service");
+
+            var isValidSignService = await _blockchainValidationService.ValidateServiceUrlAsync(signServiceUrl);
+
+            if (!isValidSignService)
+                throw new NotValidException($"Blockchain integration sign({signServiceUrl}) is not a valid Blockchain SIGN service");
+
+            var isValid = await _blockchainValidationService.ValidateHotwalletAsync(apiUrl, type, hotWalletAddress);
 
             if (!isValid)
                 throw new NotValidException($"Blockchain integration api({apiUrl}) states that {hotWalletAddress} is not a valid address");
