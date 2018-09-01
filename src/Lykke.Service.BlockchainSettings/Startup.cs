@@ -19,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Lykke.Logs.Slack;
 using Lykke.Service.BlockchainSettings.Shared;
 
 namespace Lykke.Service.BlockchainSettings
@@ -151,6 +152,25 @@ namespace Lykke.Service.BlockchainSettings
             azureStorageLogger.Start();
 
             aggregateLogger.AddLog(azureStorageLogger);
+
+            var allMessagesSlackLogger = LykkeLogToSlack.Create
+            (
+                slackService,
+                "CommonBlockChainIntegration",
+                // ReSharper disable once RedundantArgumentDefaultValue
+                LogLevel.All
+            );
+
+            aggregateLogger.AddLog(allMessagesSlackLogger);
+
+            var importantMessagesSlackLogger = LykkeLogToSlack.Create
+            (
+                slackService,
+                "CommonBlockChainIntegrationImportantMessages",
+                LogLevel.All ^ LogLevel.Info
+            );
+
+            aggregateLogger.AddLog(importantMessagesSlackLogger);
 
             return aggregateLogger;
         }
