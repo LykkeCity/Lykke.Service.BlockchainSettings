@@ -1,57 +1,65 @@
-﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using AzureStorage.Tables;
-using Common.Log;
-using Lykke.Common.ApiLibrary.Middleware;
-using Lykke.Common.ApiLibrary.Swagger;
-using Lykke.Logs;
-using Lykke.MonitoringServiceApiCaller;
-using Lykke.Service.BlockchainSettings.Core.Services;
+﻿using System;
+using JetBrains.Annotations;
+using Lykke.Sdk;
+using Lykke.Service.BlockchainSettings.Modules;
 using Lykke.Service.BlockchainSettings.Shared.Attributes;
 using Lykke.Service.BlockchainSettings.Shared.Settings;
 using Lykke.Service.BlockchainSettings.Shared.Swagger;
-using Lykke.SettingsReader;
-using Lykke.SlackNotification.AzureQueue;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
-using Lykke.Service.BlockchainSettings.Shared;
 
-namespace Lykke.Service.BlockchainSettings
+namespace Lykke.Service.BlockchainSettings.Tests
 {
     //Used in hosted server
-    public class TestStartup : BlockchainSettingsStartupBase
+    public class TestStartup
     {
-        private string _monitoringServiceUrl;
-
-        public TestStartup(IHostingEnvironment env) : base(env)
+        private readonly LykkeSwaggerOptions _swaggerOptions = new LykkeSwaggerOptions
         {
+            ApiTitle = "BlockchainSettings API",
+            ApiVersion = "v1"
+        };
+
+        [UsedImplicitly]
+        public IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            return services.BuildServiceProvider<AppSettings>(options =>
+            {
+                options.SwaggerOptions = _swaggerOptions;
+
+                options.Swagger = genOptions =>
+                {
+                    genOptions.OperationFilter<ApiKeyHeaderAccessTokenOperationFilter>();
+                };
+
+                options.ConfigureMvcOptions = mvcOptions =>
+                {
+                    mvcOptions.Filters.Add(typeof(CheckModelStateAttribute), 0);
+                    mvcOptions.Filters.Add(typeof(ValidateActionParametersAttribute), 1);
+                };
+
+                options.Logs = logs =>
+                {
+                    logs.UseEmptyLogging();
+                };
+                
+                options.RegisterAdditionalModules = x =>
+                {
+                    x.RegisterModule<ServiceModule>();
+                    x.RegisterModule<CacheModule>();
+                    x.RegisterModule<DataLayerModule>();
+                    x.RegisterModule<SecurityModule>();
+                    x.RegisterModule<MocksModule>();
+                };
+            });
         }
 
-        public override (IContainer, ILog) RegisterContainer(IServiceCollection services)
+        [UsedImplicitly]
+        public void Configure(IApplicationBuilder app)
         {
-            var builder = new ContainerBuilder();
-
-            var log = new LogToConsole();
-
-            builder.Populate(services);
-
-            return (builder.Build(), Log);
-        }
-
-        protected override async Task StartApplication()
-        {
-        }
-
-        protected override async Task StopApplication()
-        {
-        }
-
-        protected override async Task CleanUp()
-        {
+            app.UseLykkeConfiguration(options =>
+            {
+                options.SwaggerOptions = _swaggerOptions;
+            });
         }
     }
 }

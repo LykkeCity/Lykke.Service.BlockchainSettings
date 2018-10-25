@@ -1,48 +1,37 @@
 ﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Autofac.Features.AttributeFilters;
-using Common.Log;
-using Lykke.Service.BlockchainSettings.AzureRepositories.Repositories;
+using JetBrains.Annotations;
 using Lykke.Service.BlockchainSettings.Core;
-using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
-using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
+using Lykke.Service.BlockchainSettings.Shared.Settings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Caching.Redis;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Lykke.Service.BlockchainSettings.Modules
 {
+    [UsedImplicitly]
     public class CacheModule : Module
     {
-        private readonly IReloadingManager<CacheSettings> _settings;
-        private readonly ILog _log;
-        // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
-        private readonly IServiceCollection _services;
+        private readonly IReloadingManager<AppSettings> _settings;
 
-        public CacheModule(IReloadingManager<CacheSettings> settings, ILog log)
+        public CacheModule(IReloadingManager<AppSettings> settings)
         {
             _settings = settings;
-            _log = log;
-
-            _services = new ServiceCollection();
         }
 
         protected override void Load(ContainerBuilder builder)
         {
             var settingsCurrentValue = _settings.CurrentValue;
-            IDistributedCache cache = null;
+            IDistributedCache cache;
 
             if (settingsCurrentValue == null ||
-                string.IsNullOrEmpty(settingsCurrentValue.RedisConfiguration))
+                string.IsNullOrEmpty(settingsCurrentValue.BlockchainSettingsService.RedisCache.RedisConfiguration))
             {
                 //InMemory
-                var inMemoryCacheOptions = Options.Create(new MemoryDistributedCacheOptions()
-                {
-                });
+                var inMemoryCacheOptions = Options.Create(new MemoryDistributedCacheOptions());
 
                 cache = new MemoryDistributedCache(inMemoryCacheOptions);
             }
@@ -51,9 +40,9 @@ namespace Lykke.Service.BlockchainSettings.Modules
                 //Redis
                 cache = new RedisCache(new RedisCacheOptions
                 {
-                    Configuration = _settings.CurrentValue.RedisConfiguration,
-                    InstanceName = _settings.CurrentValue.InstanceName != null
-                        ? $"BlockchainSettings:{_settings.CurrentValue.InstanceName}:"
+                    Configuration = _settings.CurrentValue.BlockchainSettingsService.RedisCache.RedisConfiguration,
+                    InstanceName = _settings.CurrentValue.BlockchainSettingsService.RedisCache.InstanceName != null
+                        ? $"BlockchainSettings:{_settings.CurrentValue.BlockchainSettingsService.RedisCache.InstanceName}:"
                         : "BlockchainSettings:"
                 });
             }
@@ -67,8 +56,6 @@ namespace Lykke.Service.BlockchainSettings.Modules
                 .As<IBlockchainSettingsServiceCached>()
                 .SingleInstance()
                 .WithAttributeFiltering();
-
-            builder.Populate(_services);
         }
     }
 }
