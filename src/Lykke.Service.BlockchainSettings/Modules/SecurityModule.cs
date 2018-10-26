@@ -1,27 +1,25 @@
-﻿using System.Collections.Generic;
-using Autofac;
-using Common.Log;
+﻿using Autofac;
 using Lykke.Service.BlockchainSettings.Shared.Security;
-using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Lykke.SettingsReader;
 using System.Linq;
+using JetBrains.Annotations;
+using Lykke.Service.BlockchainSettings.Shared.Settings;
 
 namespace Lykke.Service.BlockchainSettings.Modules
 {
+    [UsedImplicitly]
     public class SecurityModule : Module
     {
-        private readonly IReloadingManager<IEnumerable<ApiKey>> _settings;
-        private readonly ILog _log;
+        private readonly IReloadingManager<AppSettings> _settings;
 
-        public SecurityModule(IReloadingManager<IEnumerable<ApiKey>> settings, ILog log)
+        public SecurityModule(IReloadingManager<AppSettings> settings)
         {
             _settings = settings;
-            _log = log;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            var dict = _settings.CurrentValue.ToDictionary(x => x.Key, y=> y.AccessType);
+            var dict = _settings.CurrentValue.BlockchainSettingsService.Keys.ToDictionary(x => x.Key, y=> y.AccessType);
 
             builder.RegisterInstance(new AccessTokenService(dict))
                 .As<IAccessTokenService>();

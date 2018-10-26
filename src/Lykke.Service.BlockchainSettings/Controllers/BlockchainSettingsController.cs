@@ -5,7 +5,6 @@ using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Lykke.Service.BlockchainSettings.Contract.Responses;
 using Lykke.Service.BlockchainSettings.Shared.Attributes;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
-using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -13,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 
 namespace Lykke.Service.BlockchainSettings.Controllers
 {

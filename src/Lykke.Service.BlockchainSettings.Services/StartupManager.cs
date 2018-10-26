@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Common.Log;
-using Lykke.Service.BlockchainSettings.Core.Services;
+using Lykke.Common.Log;
+using Lykke.Sdk;
 
 namespace Lykke.Service.BlockchainSettings.Services
 {
@@ -15,9 +16,9 @@ namespace Lykke.Service.BlockchainSettings.Services
     {
         private readonly ILog _log;
 
-        public StartupManager(ILog log)
+        public StartupManager(ILogFactory logFactory)
         {
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task StartAsync()

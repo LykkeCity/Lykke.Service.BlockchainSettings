@@ -1,35 +1,26 @@
 ﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Common.Log;
+using JetBrains.Annotations;
+using Lykke.Sdk;
+using Lykke.Sdk.Health;
 using Lykke.Service.BlockchainSettings.Core.Services;
 using Lykke.Service.BlockchainSettings.Services;
-using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
+using Lykke.Service.BlockchainSettings.Shared.Settings;
 using Lykke.SettingsReader;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.BlockchainSettings.Modules
 {
+    [UsedImplicitly]
     public class ServiceModule : Module
     {
-        private readonly IReloadingManager<BlockchainSettingsSettings> _settings;
-        private readonly ILog _log;
-        // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
-        private readonly IServiceCollection _services;
+        private readonly IReloadingManager<AppSettings> _settings;
 
-        public ServiceModule(IReloadingManager<BlockchainSettingsSettings> settings, ILog log)
+        public ServiceModule(IReloadingManager<AppSettings> settings)
         {
             _settings = settings;
-            _log = log;
-
-            _services = new ServiceCollection();
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance(_log)
-                .As<ILog>()
-                .SingleInstance();
-
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
@@ -47,8 +38,6 @@ namespace Lykke.Service.BlockchainSettings.Modules
             builder.RegisterType<BlockchainValidationService>()
                 .As<IBlockchainValidationService>()
                 .SingleInstance();
-
-            builder.Populate(_services);
         }
     }
 }
