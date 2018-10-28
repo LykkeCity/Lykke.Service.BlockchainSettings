@@ -33,7 +33,7 @@ namespace Lykke.Service.BlockchainSettings.Services
             }
             catch (Exception e)
             {
-                _log.Info(nameof(ValidateHotwalletAsync), $"{apiUrl}, {type}, {address}", "Could not check validity");
+                _log.Info(nameof(ValidateHotwalletAsync), "Could not check validity", $"{apiUrl}, {type}, {address}", e);
             }
 
             return isAddressValid;
@@ -53,7 +53,7 @@ namespace Lykke.Service.BlockchainSettings.Services
             }
             catch (Exception e)
             {
-                _log.Info(nameof(ValidateHotwalletAsync), "Could not check api validity", $"{serviceUrl}");
+                _log.Info(nameof(ValidateHotwalletAsync), "Could not check api validity", $"{serviceUrl}", e);
             }
 
             return isUrlValid;
