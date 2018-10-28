@@ -46,11 +46,15 @@ namespace Lykke.Service.BlockchainSettings
                         extendedLogs.AddAdditionalSlackChannel("CommonBlockChainIntegration", channelOptions =>
                         {
                             channelOptions.MinLogLevel = Microsoft.Extensions.Logging.LogLevel.Information;
+                            channelOptions.SpamGuard.DisableGuarding();
+                            channelOptions.IncludeHealthNotifications();
                         });
                         
                         extendedLogs.AddAdditionalSlackChannel("CommonBlockChainIntegrationImportantMessages", channelOptions =>
                         {
                             channelOptions.MinLogLevel = Microsoft.Extensions.Logging.LogLevel.Warning;
+                            channelOptions.SpamGuard.DisableGuarding();
+                            channelOptions.IncludeHealthNotifications();
                         });
                     };
                 };
