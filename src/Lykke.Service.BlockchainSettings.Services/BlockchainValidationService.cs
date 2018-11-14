@@ -3,16 +3,19 @@ using Lykke.Service.BlockchainApi.Client;
 using Lykke.Service.BlockchainSettings.Core.Services;
 using System;
 using System.Threading.Tasks;
+using Lykke.Common.Log;
 
 namespace Lykke.Service.BlockchainSettings.Services
 {
     public class BlockchainValidationService : IBlockchainValidationService
     {
-        private ILog _log;
+        private readonly ILogFactory _logFactory;
+        private readonly ILog _log;
 
-        public BlockchainValidationService(ILog log)
+        public BlockchainValidationService(ILogFactory logFactory)
         {
-            _log = log.CreateComponentScope(nameof(BlockchainValidationService));
+            _logFactory = logFactory;
+            _log = logFactory.CreateLog(this);
         }
 
         public async Task<bool> ValidateHotwalletAsync(string apiUrl, string type, string address)
@@ -23,14 +26,14 @@ namespace Lykke.Service.BlockchainSettings.Services
             {
                 //TODO: WAIT FOR NEW IBlockchainApiClient on 2.1 framework (httpClientFactory will be there)
                 //DIRTY HACK:
-                using (var client = new Lykke.Service.BlockchainApi.Client.BlockchainApiClient(_log, apiUrl, 3))
+                using (var client = new BlockchainApiClient(_logFactory, apiUrl, 3))
                 {
                     isAddressValid = await client.IsAddressValidAsync(address);
                 }
             }
             catch (Exception e)
             {
-                _log.WriteInfo(nameof(ValidateHotwalletAsync), $"{apiUrl}, {type}, {address}", "Could not check validity");
+                _log.Info(nameof(ValidateHotwalletAsync), message: "Could not check validity", context: $"{apiUrl}, {type}, {address}", exception: e);
             }
 
             return isAddressValid;
@@ -42,7 +45,7 @@ namespace Lykke.Service.BlockchainSettings.Services
 
             try
             {
-                using (var client = new Lykke.Service.BlockchainApi.Client.BlockchainApiClient(_log, serviceUrl, 3))
+                using (var client = new BlockchainApiClient(_logFactory, serviceUrl, 3))
                 {
                     var isAlive = await client.GetIsAliveAsync();
                     isUrlValid = isAlive != null;
@@ -50,7 +53,7 @@ namespace Lykke.Service.BlockchainSettings.Services
             }
             catch (Exception e)
             {
-                _log.WriteInfo(nameof(ValidateHotwalletAsync), $"{serviceUrl}", "Could not check api validity");
+                _log.Info(nameof(ValidateHotwalletAsync), message: "Could not check api validity", context: $"{serviceUrl}", exception: e);
             }
 
             return isUrlValid;

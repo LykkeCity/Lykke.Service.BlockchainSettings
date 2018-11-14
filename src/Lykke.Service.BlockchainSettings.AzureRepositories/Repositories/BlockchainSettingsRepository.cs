@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AzureStorage;
 using AzureStorage.Tables;
-using Common.Log;
+using Lykke.Common.Log;
 using Lykke.Service.BlockchainSettings.AzureRepositories.Entities;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
 using Lykke.Service.BlockchainSettings.Core.Exceptions;
@@ -23,11 +22,11 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
             _table = table;
         }
 
-        public static IBlockchainSettingsRepository CreateRepository(IReloadingManager<string> connectionString, ILog log)
+        public static IBlockchainSettingsRepository CreateRepository(IReloadingManager<string> connectionString, ILogFactory logFactory)
         {
             var repo = new BlockchainSettingsRepository(
                 AzureTableStorage<BlockchainSettingEntity>.Create(
-                    connectionString, "BlockchainSettings", log));
+                    connectionString, "BlockchainSettings", logFactory));
 
             return repo;
         }
@@ -80,7 +79,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
             string rowKey = BlockchainSettingEntity.GetRowKey(settings.Type);
             string errorMessage = null;
 
-            bool isUpdated = await _table.InsertOrModifyAsync(partitionKey, rowKey, () => entity, (model) =>
+            bool isUpdated = await _table.InsertOrModifyAsync(partitionKey, rowKey, () => entity, model =>
             {
                 if (model.ETag != entity.ETag)
                 {
@@ -119,8 +118,8 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
 
         private async Task<BlockchainSettingEntity> GetBlockchainSettingEntity(string type)
         {
-            BlockchainSettingEntity entity = await _table.GetDataAsync(Entities.BlockchainSettingEntity.GetPartitionKey(type),
-                Entities.BlockchainSettingEntity.GetRowKey(type));
+            BlockchainSettingEntity entity = await _table.GetDataAsync(BlockchainSettingEntity.GetPartitionKey(type),
+                BlockchainSettingEntity.GetRowKey(type));
 
             return entity;
         }
