@@ -9,10 +9,12 @@ namespace Lykke.Service.BlockchainSettings.Core.Repositories
     {
         Task<(IEnumerable<BlockchainExplorer>, string continuationToken)> GetAllAsync(int take, string continuationToken = null);
 
-        Task<BlockchainExplorer> GetAsync(string type);
+        Task<IEnumerable<BlockchainExplorer>> GetAllForBlockchainAsync(string blockchainType);
+
+        Task<BlockchainExplorer> GetAsync(string blockchainType, string recordId);
 
         ///<exception cref="DoesNotExistException">when entity does not exist</exception>
-        Task RemoveAsync(string type);
+        Task RemoveAsync(string blockchainType, string recordId);
 
         ///<exception cref="AlreadyExistsException">when entity is already created</exception>
         Task CreateAsync(BlockchainExplorer settings);
