@@ -56,25 +56,25 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
         }
 
         /// <inheritdoc />
-        public async Task CreateAsync(BlockchainExplorer settings)
+        public async Task CreateAsync(BlockchainExplorer explorer)
         {
-            var existing = await GetBlockchainExplorerEntity(settings.BlockchainType, settings.RecordId);
+            var existing = await GetBlockchainExplorerEntity(explorer.BlockchainType, explorer.RecordId);
 
             if (existing != null)
-                throw new AlreadyExistsException($"Setting with type {settings.BlockchainType} is already exists");
+                throw new AlreadyExistsException($"Setting with type {explorer.BlockchainType} is already exists");
 
-            BlockchainExplorerEntity entity = BlockchainExplorerEntity.FromDomain(settings);
+            BlockchainExplorerEntity entity = BlockchainExplorerEntity.FromDomain(explorer);
 
             await _table.InsertAsync(entity);
         }
 
         /// <inheritdoc />
-        public async Task UpdateAsync(BlockchainExplorer settings)
+        public async Task UpdateAsync(BlockchainExplorer explorer)
         {
-            BlockchainExplorerEntity entity = BlockchainExplorerEntity.FromDomain(settings);
+            BlockchainExplorerEntity entity = BlockchainExplorerEntity.FromDomain(explorer);
 
-            string partitionKey = BlockchainSettingEntity.GetPartitionKey(settings.BlockchainType);
-            string rowKey = BlockchainSettingEntity.GetRowKey(settings.RecordId);
+            string partitionKey = BlockchainExplorerEntity.GetPartitionKey(explorer.BlockchainType);
+            string rowKey = BlockchainExplorerEntity.GetRowKey(explorer.RecordId);
             string errorMessage = null;
 
             bool isUpdated = await _table.InsertOrModifyAsync(partitionKey, rowKey, () => entity, model =>
@@ -103,8 +103,8 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
         /// <inheritdoc />>
         public async Task RemoveAsync(string type, string recordId)
         {
-            string partitionKey = BlockchainSettingEntity.GetPartitionKey(type);
-            string rowKey = BlockchainSettingEntity.GetRowKey(type);
+            string partitionKey = BlockchainExplorerEntity.GetPartitionKey(type);
+            string rowKey = BlockchainExplorerEntity.GetRowKey(recordId);
             var existing = await GetBlockchainExplorerEntity(type, recordId);
 
             if (existing == null)

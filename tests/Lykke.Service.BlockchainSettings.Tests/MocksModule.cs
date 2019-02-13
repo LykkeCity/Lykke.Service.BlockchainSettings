@@ -1,13 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Autofac;
 using JetBrains.Annotations;
 using Lykke.Sdk.Health;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Core.Services;
 using Lykke.Service.BlockchainSettings.Services;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
+using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
 using Lykke.Service.BlockchainSettings.Shared.Security;
 using Lykke.Service.BlockchainSettings.Shared.Settings;
 using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
@@ -46,6 +48,8 @@ namespace Lykke.Service.BlockchainSettings.Tests
                 ethClassicSetting
             };
 
+            #region BlockchainSettingsService
+
             var blockchainValidationService = new Mock<IBlockchainValidationService>();
             blockchainValidationService.Setup(x =>
                     x.ValidateHotwalletAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -72,6 +76,36 @@ namespace Lykke.Service.BlockchainSettings.Tests
             
             builder.RegisterInstance(accessTokenService.Object);
             builder.RegisterInstance<IBlockchainSettingsServiceCached>(cachedService).SingleInstance();
+
+            #endregion
+
+            #region BlockchainSettingsService
+
+            var blockchainExplorer = new BlockchainExplorer()
+            {
+                BlockchainType = "EthereumClassic",
+                ETag = DateTime.UtcNow.ToString(),
+                RecordId = Guid.NewGuid().ToString(),
+                ExplorerUrlTemplate = "https://some-blockchain-explorer.bit/{tx-hash}"
+            };
+
+            var explorers = new List<BlockchainExplorer>()
+            {
+                blockchainExplorer
+            };
+
+            var blockchainExplorersRepository = new BlockchainExplorersRepositoryFake(explorers);
+            var blockchainExplorersService = new BlockchainExplorersService(blockchainExplorersRepository);
+
+
+            BlockchainExplorersServiceCached cachedExplorersService = new BlockchainExplorersServiceCached(
+                blockchainExplorersService,
+                new DistributedCacheFake()
+            );
+
+            builder.RegisterInstance<IBlockchainExplorersServiceCached>(cachedExplorersService).SingleInstance();
+
+            #endregion
         }
     }
 }

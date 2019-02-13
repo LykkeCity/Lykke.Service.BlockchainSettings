@@ -44,6 +44,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
         {
             return new BlockchainExplorerEntity()
             {
+                RecordId = explorer.RecordId,
                 BlockchainType = explorer.BlockchainType,
                 ExplorerUrlTemplate = explorer.ExplorerUrlTemplate,
                 ETag = explorer.ETag,

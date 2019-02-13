@@ -25,6 +25,12 @@ namespace Lykke.Service.BlockchainSettings.Modules
                     c.Resolve<ILogFactory>()))
                 .As<IBlockchainSettingsRepository>()
                 .SingleInstance();
+
+            builder.Register(c =>
+                    BlockchainExplorersRepository.CreateRepository(_settings.ConnectionString(x => x.BlockchainSettingsService.Db.DataConnectionString),
+                        c.Resolve<ILogFactory>()))
+                .As<IBlockchainExplorersRepository>()
+                .SingleInstance();
         }
     }
 }
