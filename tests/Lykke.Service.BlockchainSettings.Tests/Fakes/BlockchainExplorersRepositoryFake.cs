@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Service.BlockchainSettings.Core.Exceptions;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Fakes
 {
@@ -11,7 +12,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Fakes
     {
         public BlockchainExplorersRepositoryFake(IEnumerable<BlockchainExplorer> defindedSettings)
         {
-            Explorers = defindedSettings.ToList();
+            Explorers = defindedSettings?.ToList() ?? new List<BlockchainExplorer>();
         }
 
         public List<BlockchainExplorer> Explorers { get; private set; }
@@ -35,19 +36,43 @@ namespace Lykke.Service.BlockchainSettings.Tests.Fakes
 
         public Task RemoveAsync(string blockchainType, string recordId)
         {
-            throw new NotImplementedException();
-        }
+            var explorer = Explorers.FirstOrDefault(x => x.BlockchainType == blockchainType && x.RecordId == recordId);
 
-        public Task CreateAsync(BlockchainExplorer settings)
-        {
-            Explorers.Add(settings);
+            if (explorer == null)
+                throw  new DoesNotExistException($"");
+
+            Explorers.Remove(explorer);
 
             return Task.CompletedTask;
         }
 
-        public Task UpdateAsync(BlockchainExplorer settings)
+        public Task CreateAsync(BlockchainExplorer explorer)
         {
-            throw new NotImplementedException();
+            EnsureETag(explorer);
+            Explorers.Add(explorer);
+
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateAsync(BlockchainExplorer explorer)
+        {
+            EnsureETag(explorer);
+            var existingExplorer = Explorers.FirstOrDefault(x => x.BlockchainType == explorer.BlockchainType
+                                                         && x.RecordId == explorer.RecordId);
+
+            if (explorer == null)
+                throw new DoesNotExistException($"");
+
+            Explorers.Remove(existingExplorer);
+            Explorers.Add(existingExplorer);
+
+            return Task.CompletedTask;
+        }
+
+        private void EnsureETag(BlockchainExplorer explorer)
+        {
+            if (string.IsNullOrEmpty(explorer.ETag))
+                explorer.ETag = DateTime.UtcNow.ToString();
         }
     }
 }
