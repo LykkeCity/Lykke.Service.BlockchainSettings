@@ -59,5 +59,43 @@ namespace Lykke.Service.BlockchainSettings.Client
 
         #endregion
 
+        #region BlockchainExplorersController
+
+        /// <summary>
+        /// Get all explorers
+        /// </summary>
+        [Get("/api/blockchain-explorers/all"), ClientCaching(Minutes = 30)]
+        Task<BlockchainExplorersCollectionResponse> GetAllExplorersAsync();
+
+        /// <summary>
+        /// Get explorers by type
+        /// </summary>
+        [Get("/api/blockchain-explorers/{type}")]
+        [ClientCaching(Minutes = 30)]
+        Task<BlockchainExplorersCollectionResponse> GetBlockchainExplorerByTypeAsync(string type);
+
+        /// <summary>
+        /// Create explorer
+        /// </summary>
+        /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
+        [Post("/api/blockchain-explorers")]
+        Task CreateBlockchainExplorerAsync(BlockchainExplorerCreateRequest createRequest);
+
+        /// <summary>
+        /// Update explorer
+        /// </summary>
+        /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
+        [Put("/api/blockchain-explorers")]
+        Task UpdateBlockchainExplorerAsync(BlockchainExplorerUpdateRequest updateRequest);
+
+        /// <summary>
+        /// Remove explorer
+        /// </summary>
+        /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
+        [Delete("/api/blockchain-explorers/{type}/{recordId}")]
+        Task RemoveBlockchainExplorerAsync(string type, string recordId);
+
+        #endregion
+
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Common;
-using JetBrains.Annotations;
+﻿using Common;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
 using Microsoft.WindowsAzure.Storage.Table;
 
