@@ -15,9 +15,15 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public const string WriteKey = "write";
         public const string ReadWriteKey = "default";
 
+        [SetUp]
+        public void SetupBeforeEachTest()
+        {
+            MocksModule.ReInitBlockchainRepository();
+        }
+
         [TestCase(true)]
         [TestCase(false)]
-        public async Task GetAllSettings__Called__Returns(bool cacheEnabled)
+        public async Task GetAllExplorersAsync__Called__Returns(bool cacheEnabled)
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", cacheEnabled, cacheManager,
@@ -29,7 +35,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         }
 
         [Test]
-        public async Task GetAllSettings__CalledAfterAdd__CouldBeInvalidated()
+        public async Task GetAllExplorersAsync__CalledAfterAdd__CouldBeInvalidated()
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", true, cacheManager,
@@ -52,6 +58,48 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             Assert.IsTrue(allSettings.Collection.Count() == 1);
             Assert.IsTrue(allSettingsCountBeforeInvalidation == 1);
             Assert.IsTrue(allSettings3.Collection.Count() == 2);
+        }
+
+        [Test]
+        public async Task CheckBasicFlow()
+        {
+            var client = Factory.CreateNew(Fixture.ClientUrl, "default", false, null,
+                new RequestInterceptorHandler(Fixture.Client));
+            var ropstenTemplate = "https://ropsten.etherscan.io/tx/{tx-hash}";
+            var mainnetTemplate = "https://etherscan.io/tx/{tx-hash}";
+            var blockchainType = "EthereumClassic";
+
+            await client.CreateBlockchainExplorerAsync(new BlockchainExplorerCreateRequest
+            {
+                BlockchainType = blockchainType,
+                ExplorerUrlTemplate = ropstenTemplate
+            });
+
+            var allSettings2 = await client.GetAllExplorersAsync();
+            var ropstenEthereum = allSettings2
+                .Collection
+                .FirstOrDefault(x => x.ExplorerUrlTemplate == ropstenTemplate);
+
+            ropstenEthereum.ExplorerUrlTemplate = mainnetTemplate;
+
+            await client.UpdateBlockchainExplorerAsync(new BlockchainExplorerUpdateRequest()
+            {
+                BlockchainType = ropstenEthereum.BlockchainType,
+                RecordId = ropstenEthereum.RecordId,
+                ExplorerUrlTemplate = ropstenEthereum.ExplorerUrlTemplate,
+                ETag = ropstenEthereum.ETag
+            });
+
+            var allSettings3 = await client.GetBlockchainExplorerByTypeAsync(blockchainType);
+            var mainnetEthereum = allSettings2
+                .Collection
+                .FirstOrDefault(x => x.ExplorerUrlTemplate == mainnetTemplate);
+
+            Assert.IsTrue(mainnetEthereum != null);
+
+            await client.RemoveBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
+            var allSettings4 = await client.GetBlockchainExplorerByTypeAsync(blockchainType);
+            Assert.IsTrue(allSettings4.Collection.Count() == 1);
         }
     }
 }
