@@ -66,7 +66,7 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> GetAsync([Required][FromRoute]string type)
+        public async Task<IActionResult> GetForTypeAsync([Required][FromRoute]string type)
         {
             var explorers = await _blockchainExplorersServiceCached.GetAsync(type);
 
@@ -77,6 +77,30 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
             {
                 Collection = explorers.Select(MapToResponse)
             };
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get specific Blockchain setting
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{type}/{recordId}")]
+        [ApiKeyAuthorize(ApiKeyAccessType.Read)]
+        [SwaggerOperation("Get")]
+        [ProducesResponseType(typeof(BlockchainExplorersCollectionResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetAsync([Required][FromRoute]string type, [Required][FromRoute] string recordId)
+        {
+            var explorer = await _blockchainExplorersServiceCached.GetAsync(type, recordId);
+
+            if (explorer == null)
+                return NoContent();
+
+            var response = MapToResponse(explorer);
 
             return Ok(response);
         }

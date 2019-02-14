@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac.Features.AttributeFilters;
 using Microsoft.Extensions.Caching.Distributed;
@@ -62,6 +63,13 @@ namespace Lykke.Service.BlockchainSettings.Shared.Cache
             }
 
             return all;
+        }
+
+        public async Task<BlockchainExplorer> GetAsync(string type, string recordId)
+        {
+            var all = await GetAsync(type);
+
+            return all?.FirstOrDefault(x => x.RecordId == recordId);
         }
 
         /// <inheritdoc/>

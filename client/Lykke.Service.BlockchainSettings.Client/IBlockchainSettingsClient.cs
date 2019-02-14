@@ -75,6 +75,13 @@ namespace Lykke.Service.BlockchainSettings.Client
         Task<BlockchainExplorersCollectionResponse> GetBlockchainExplorerByTypeAsync(string type);
 
         /// <summary>
+        /// Get explorers by type
+        /// </summary>
+        [Get("/api/blockchain-explorers/{type}/{recordId}")]
+        [ClientCaching(Minutes = 30)]
+        Task<BlockchainExplorersCollectionResponse> GetBlockchainExplorerAsync(string type, string recordId);
+
+        /// <summary>
         /// Create explorer
         /// </summary>
         /// <exception cref="NotOkException">Throws in the case of 4xx or 5xx http status code</exception>
