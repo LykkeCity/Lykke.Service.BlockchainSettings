@@ -46,6 +46,13 @@ namespace Lykke.Service.BlockchainSettings.Services
             return allExplorers;
         }
 
+        public async Task<BlockchainExplorer> GetAsync(string type, string recordId)
+        {
+            var explorer = await _blockchainExplorersRepository.GetAsync(type, recordId);
+
+            return explorer;
+        }
+
         ///<inheritdoc/>
         public async Task RemoveAsync(string type, string recordId)
         {

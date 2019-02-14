@@ -11,6 +11,8 @@ namespace Lykke.Service.BlockchainSettings.Core.Services
 
         Task<IEnumerable<BlockchainExplorer>> GetAsync(string type);
 
+        Task<BlockchainExplorer> GetAsync(string type, string recordId);
+
         ///<exception cref="DoesNotExistException">when entity does not exist</exception>
         Task RemoveAsync(string type, string recordId);
 

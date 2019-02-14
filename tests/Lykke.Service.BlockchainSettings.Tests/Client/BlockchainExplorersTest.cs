@@ -97,9 +97,11 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
 
             Assert.IsTrue(mainnetEthereum != null);
 
+            var record = await client.GetBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
             await client.RemoveBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
             var allSettings4 = await client.GetBlockchainExplorerByTypeAsync(blockchainType);
             Assert.IsTrue(allSettings4.Collection.Count() == 1);
+            Assert.IsNotNull(record);
         }
     }
 }
