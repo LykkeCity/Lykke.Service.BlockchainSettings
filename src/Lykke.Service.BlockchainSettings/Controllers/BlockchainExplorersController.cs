@@ -88,7 +88,7 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         [HttpGet("{type}/{recordId}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
         [SwaggerOperation("Get")]
-        [ProducesResponseType(typeof(BlockchainExplorersCollectionResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BlockchainExplorerResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]

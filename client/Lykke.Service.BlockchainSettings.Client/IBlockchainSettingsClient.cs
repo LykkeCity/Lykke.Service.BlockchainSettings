@@ -79,7 +79,7 @@ namespace Lykke.Service.BlockchainSettings.Client
         /// </summary>
         [Get("/api/blockchain-explorers/{type}/{recordId}")]
         [ClientCaching(Minutes = 30)]
-        Task<BlockchainExplorersCollectionResponse> GetBlockchainExplorerAsync(string type, string recordId);
+        Task<BlockchainExplorerResponse> GetBlockchainExplorerAsync(string type, string recordId);
 
         /// <summary>
         /// Create explorer
