@@ -5,6 +5,7 @@ using Lykke.Service.BlockchainSettings.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lykke.Service.BlockchainSettings.Core;
 using Lykke.Service.BlockchainSettings.Core.Exceptions;
 
 namespace Lykke.Service.BlockchainSettings.Services
@@ -12,7 +13,6 @@ namespace Lykke.Service.BlockchainSettings.Services
     public class BlockchainExplorersService : IBlockchainExplorersService
     {
         private readonly IBlockchainExplorersRepository _blockchainExplorersRepository;
-        private string _txHashTemplate = "{tx-hash}";
 
         public BlockchainExplorersService(IBlockchainExplorersRepository blockchainExplorersRepository)
         {
@@ -91,7 +91,7 @@ namespace Lykke.Service.BlockchainSettings.Services
             if (!isValidUrl)
                 throw new NotValidException($"{nameof(explorer.ExplorerUrlTemplate)} is not valid Url template");
 
-            if (!explorer.ExplorerUrlTemplate.Contains(_txHashTemplate))
+            if (!explorer.ExplorerUrlTemplate.Contains(Lykke.Service.BlockchainSettings.Contract.Constants.TxHashTemplate))
                 throw new NotValidException($"{nameof(explorer.ExplorerUrlTemplate)} is not valid Url template");
 
             //var urlWithoutTempolate = explorer.ExplorerUrlTemplate.Replace(_txHashTemplate, "");
