@@ -4,6 +4,7 @@ using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Core.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Lykke.Service.BlockchainSettings.Core;
 using Lykke.Service.BlockchainSettings.Core.Exceptions;
@@ -13,10 +14,12 @@ namespace Lykke.Service.BlockchainSettings.Services
     public class BlockchainExplorersService : IBlockchainExplorersService
     {
         private readonly IBlockchainExplorersRepository _blockchainExplorersRepository;
+        private Regex _templateRegex;
 
         public BlockchainExplorersService(IBlockchainExplorersRepository blockchainExplorersRepository)
         {
             _blockchainExplorersRepository = blockchainExplorersRepository;
+            _templateRegex = new Regex(Lykke.Service.BlockchainSettings.Contract.Constants.TxHashTemplate, RegexOptions.Compiled);
         }
 
         ///<inheritdoc/>
@@ -91,8 +94,10 @@ namespace Lykke.Service.BlockchainSettings.Services
             if (!isValidUrl)
                 throw new NotValidException($"{nameof(explorer.ExplorerUrlTemplate)} is not valid Url template");
 
-            if (!explorer.ExplorerUrlTemplate.Contains(Lykke.Service.BlockchainSettings.Contract.Constants.TxHashTemplate))
-                throw new NotValidException($"{nameof(explorer.ExplorerUrlTemplate)} is not valid Url template");
+            var matches = _templateRegex.Matches(explorer.ExplorerUrlTemplate);
+            if (matches.Count != 1)
+                throw new NotValidException($"{nameof(explorer.ExplorerUrlTemplate)} should contain one " +
+                                            $"{Lykke.Service.BlockchainSettings.Contract.Constants.TxHashTemplate}");
 
             //var urlWithoutTempolate = explorer.ExplorerUrlTemplate.Replace(_txHashTemplate, "");
         }
