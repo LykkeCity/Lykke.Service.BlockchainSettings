@@ -1,4 +1,5 @@
-﻿using AzureStorage;
+﻿using System;
+using AzureStorage;
 using AzureStorage.Tables;
 using Lykke.Common.Log;
 using Lykke.Service.BlockchainSettings.AzureRepositories.Entities;
@@ -76,25 +77,33 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
             string partitionKey = BlockchainExplorerEntity.GetPartitionKey(explorer.BlockchainType);
             string rowKey = BlockchainExplorerEntity.GetRowKey(explorer.RecordId);
             string errorMessage = null;
+            bool isUpdated = false;
 
-            bool isUpdated = await _table.InsertOrModifyAsync(partitionKey, rowKey, () => entity, model =>
+            try
             {
-                if (model.ETag != entity.ETag)
+                isUpdated = await _table.InsertOrModifyAsync(partitionKey, rowKey, () => entity, model =>
                 {
-                    errorMessage = $"Entity with type {model.BlockchainType} has eTag == {model.ETag}, eTag in update request is {entity.ETag}";
+                    if (model.ETag != entity.ETag)
+                    {
+                        errorMessage = $"Entity with type {model.BlockchainType} has eTag == {model.ETag}, eTag in update request is {entity.ETag}";
 
-                    return false;
-                }
+                        return false;
+                    }
 
-                model.BlockchainType = entity.BlockchainType;
-                model.ExplorerUrlTemplate = entity.ExplorerUrlTemplate;
-                model.RecordId = entity.RecordId;
-                model.ETag = entity.ETag;
-                model.PartitionKey = entity.PartitionKey;
-                model.RowKey = entity.RowKey;
+                    model.BlockchainType = entity.BlockchainType;
+                    model.ExplorerUrlTemplate = entity.ExplorerUrlTemplate;
+                    model.RecordId = entity.RecordId;
+                    model.ETag = entity.ETag;
+                    model.PartitionKey = entity.PartitionKey;
+                    model.RowKey = entity.RowKey;
 
-                return true;
-            });
+                    return true;
+                });
+            }
+            catch (Exception e)
+            {
+                throw new DoesNotExistException(e.Message);
+            }
 
             if (!isUpdated)
                 throw new AlreadyUpdatedException(errorMessage);

@@ -65,6 +65,7 @@ namespace Lykke.Service.BlockchainSettings.Services
         ///<inheritdoc/>
         public async Task CreateAsync(BlockchainExplorer explorer)
         {
+            Trim(explorer);
             ThrowOnNotValidBlockchainExplorer(explorer);
             await _blockchainExplorersRepository.CreateAsync(explorer);
         }
@@ -72,6 +73,7 @@ namespace Lykke.Service.BlockchainSettings.Services
         ///<inheritdoc/>
         public async Task UpdateAsync(BlockchainExplorer explorer)
         {
+            Trim(explorer);
             ThrowOnNotValidBlockchainExplorer(explorer);
             await _blockchainExplorersRepository.UpdateAsync(explorer);
         }
@@ -100,6 +102,11 @@ namespace Lykke.Service.BlockchainSettings.Services
                                             $"{Lykke.Service.BlockchainSettings.Contract.Constants.TxHashTemplate}");
 
             //var urlWithoutTempolate = explorer.ExplorerUrlTemplate.Replace(_txHashTemplate, "");
+        }
+
+        private void Trim(BlockchainExplorer explorer)
+        {
+            explorer.ExplorerUrlTemplate = explorer.ExplorerUrlTemplate.Trim();
         }
     }
 }
