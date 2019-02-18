@@ -161,6 +161,10 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
             {
                 return CreateContentResult(StatusCodes.Status400BadRequest, e.Message);
             }
+            catch (DoesNotExistException e)
+            {
+                return CreateContentResult(StatusCodes.Status400BadRequest, e.Message);
+            }
             catch (AlreadyUpdatedException e)
             {
                 return CreateContentResult(StatusCodes.Status409Conflict, e.Message);

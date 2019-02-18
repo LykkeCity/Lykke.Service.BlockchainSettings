@@ -31,7 +31,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             var allSettings = await client.GetAllExplorersAsync();
 
             Assert.IsNotNull(allSettings.Collection);
-            Assert.IsTrue(allSettings.Collection.Count()  == 1);
+            Assert.IsTrue(allSettings.Collection.Count() == 1);
         }
 
         [Test]
@@ -97,11 +97,27 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
 
             Assert.IsTrue(mainnetEthereum != null);
 
-            var record = await client.GetBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
+            var record =
+                await client.GetBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
             await client.RemoveBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
             var allSettings4 = await client.GetBlockchainExplorerByTypeAsync(blockchainType);
             Assert.IsTrue(allSettings4.Collection.Count() == 1);
             Assert.IsNotNull(record);
+        }
+
+        [Test]
+        public async Task CreateBlockchainExplorerAsync__UrlIsNotValid__ThrowsNotOkException()
+        {
+            var client = Factory.CreateNew(Fixture.ClientUrl, "default", false, null,
+                new RequestInterceptorHandler(Fixture.Client));
+            var ropstenTemplate = "http://stellar/m                     ail1/{tx-hash}";
+            var blockchainType = "EthereumClassic";
+
+            await client.CreateBlockchainExplorerAsync(new BlockchainExplorerCreateRequest
+            {
+                BlockchainType = blockchainType,
+                ExplorerUrlTemplate = ropstenTemplate
+            });
         }
     }
 }
