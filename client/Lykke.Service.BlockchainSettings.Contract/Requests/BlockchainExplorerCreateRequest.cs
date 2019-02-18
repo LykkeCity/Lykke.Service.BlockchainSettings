@@ -11,7 +11,6 @@ namespace Lykke.Service.BlockchainSettings.Contract.Requests
         public string BlockchainType { get; set; }
 
         [Required]
-        [Url]
         [DataMember(Name = "explorerUrlTemplate")]
         public string ExplorerUrlTemplate { get; set; }
     }
