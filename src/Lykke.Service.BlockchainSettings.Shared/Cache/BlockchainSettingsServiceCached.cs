@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Lykke.Service.BlockchainSettings.Core;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
 using Lykke.Service.BlockchainSettings.Core.Services;
+using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
 
 namespace Lykke.Service.BlockchainSettings.Shared.Cache
 {

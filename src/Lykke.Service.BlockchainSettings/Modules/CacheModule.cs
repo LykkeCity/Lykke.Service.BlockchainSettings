@@ -3,6 +3,7 @@ using Autofac.Features.AttributeFilters;
 using JetBrains.Annotations;
 using Lykke.Service.BlockchainSettings.Core;
 using Lykke.Service.BlockchainSettings.Shared.Cache;
+using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
 using Lykke.Service.BlockchainSettings.Shared.Settings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.Caching.Distributed;
@@ -54,6 +55,11 @@ namespace Lykke.Service.BlockchainSettings.Modules
 
             builder.RegisterType<BlockchainSettingsServiceCached>()
                 .As<IBlockchainSettingsServiceCached>()
+                .SingleInstance()
+                .WithAttributeFiltering();
+
+            builder.RegisterType<BlockchainExplorersServiceCached>()
+                .As<IBlockchainExplorersServiceCached>()
                 .SingleInstance()
                 .WithAttributeFiltering();
         }

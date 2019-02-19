@@ -1,10 +1,12 @@
-﻿using Lykke.Common.Api.Contract.Responses;
-using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
-using Lykke.Service.BlockchainSettings.Core.Exceptions;
+﻿using System;
+using Lykke.Common.Api.Contract.Responses;
 using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Lykke.Service.BlockchainSettings.Contract.Responses;
+using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+using Lykke.Service.BlockchainSettings.Core.Exceptions;
 using Lykke.Service.BlockchainSettings.Shared.Attributes;
-using Lykke.Service.BlockchainSettings.Shared.Cache;
+using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -12,19 +14,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
-using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 
-namespace Lykke.Service.BlockchainSettings.Controllers
+namespace Lykke.Service.BlockchainExplorers.Controllers
 {
-    [Route("api/blockchain-settings")]
-    public class BlockchainSettingsController : Controller
+    [Route("api/blockchain-explorers")]
+    public class BlockchainExplorersController : Controller
     {
-        private readonly IBlockchainSettingsServiceCached _blockchainSettingsService;
+        private readonly IBlockchainExplorersServiceCached _blockchainExplorersServiceCached;
 
-        public BlockchainSettingsController(IBlockchainSettingsServiceCached blockchainSettingsService)
+        public BlockchainExplorersController(IBlockchainExplorersServiceCached blockchainExplorersServiceCached)
         {
-            _blockchainSettingsService = blockchainSettingsService;
+            _blockchainExplorersServiceCached = blockchainExplorersServiceCached;
         }
 
         /// <summary>
@@ -34,19 +34,19 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [HttpGet("all")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
         [SwaggerOperation("GetAll")]
-        [ProducesResponseType(typeof(BlockchainSettingsCollectionResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BlockchainExplorersCollectionResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var settings = await _blockchainSettingsService.GetAllAsync();
+            var settings = await _blockchainExplorersServiceCached.GetAllAsync();
 
             if (settings == null || !settings.Any())
                 return NoContent();
 
-            var response = new BlockchainSettingsCollectionResponse()
+            var response = new BlockchainExplorersCollectionResponse()
             {
                 Collection = settings.Select(MapToResponse),
             };
@@ -61,19 +61,46 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [HttpGet("{type}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
         [SwaggerOperation("Get")]
-        [ProducesResponseType(typeof(BlockchainSettingsCreateRequest), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BlockchainExplorersCollectionResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> GetAsync([Required][FromRoute]string type)
+        public async Task<IActionResult> GetForTypeAsync([Required][FromRoute]string type)
         {
-            var setting = await _blockchainSettingsService.GetAsync(type);
+            var explorers = await _blockchainExplorersServiceCached.GetAsync(type);
 
-            if (setting == null)
+            if (explorers == null || !explorers.Any())
                 return NoContent();
 
-            var response = MapToResponse(setting);
+            var response = new BlockchainExplorersCollectionResponse()
+            {
+                Collection = explorers.Select(MapToResponse)
+            };
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Get specific Blockchain setting
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{type}/{recordId}")]
+        [ApiKeyAuthorize(ApiKeyAccessType.Read)]
+        [SwaggerOperation("Get")]
+        [ProducesResponseType(typeof(BlockchainExplorerResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetAsync([Required][FromRoute]string type, [Required][FromRoute] string recordId)
+        {
+            var explorer = await _blockchainExplorersServiceCached.GetAsync(type, recordId);
+
+            if (explorer == null)
+                return NoContent();
+
+            var response = MapToResponse(explorer);
 
             return Ok(response);
         }
@@ -90,13 +117,13 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> CreateAsync([FromBody]BlockchainSettingsCreateRequest request)
+        public async Task<IActionResult> CreateAsync([FromBody]BlockchainExplorerCreateRequest request)
         {
-            BlockchainSetting settings = MapToDomain(request);
+            BlockchainExplorer explorer = MapToDomain(request);
 
             try
             {
-                await _blockchainSettingsService.CreateAsync(settings);
+                await _blockchainExplorersServiceCached.CreateAsync(explorer);
             }
             catch (NotValidException e)
             {
@@ -122,15 +149,19 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> UpdateAsync([FromBody]BlockchainSettingsUpdateRequest request)
+        public async Task<IActionResult> UpdateAsync([FromBody]BlockchainExplorerUpdateRequest request)
         {
-            BlockchainSetting settings = MapToDomain(request);
+            BlockchainExplorer explorer = MapToDomain(request);
 
             try
             {
-                await _blockchainSettingsService.UpdateAsync(settings);
+                await _blockchainExplorersServiceCached.UpdateAsync(explorer);
             }
             catch (NotValidException e)
+            {
+                return CreateContentResult(StatusCodes.Status400BadRequest, e.Message);
+            }
+            catch (DoesNotExistException e)
             {
                 return CreateContentResult(StatusCodes.Status400BadRequest, e.Message);
             }
@@ -146,7 +177,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// Remove Blockchain settings
         /// </summary>
         /// <returns></returns>
-        [HttpDelete("{type}")]
+        [HttpDelete("{type}/{recordId}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
         [SwaggerOperation("Remove")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
@@ -155,11 +186,11 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> RemoveAsync([FromRoute]string type)
+        public async Task<IActionResult> RemoveAsync([FromRoute]string type, [FromRoute]string recordId)
         {
             try
             {
-                await _blockchainSettingsService.RemoveAsync(type);
+                await _blockchainExplorersServiceCached.RemoveAsync(type, recordId);
             }
             catch (DoesNotExistException e)
             {
@@ -171,38 +202,35 @@ namespace Lykke.Service.BlockchainSettings.Controllers
 
         #region Private
 
-        private BlockchainSettingsResponse MapToResponse(BlockchainSetting domainModel)
+        private BlockchainExplorerResponse MapToResponse(BlockchainExplorer domainModel)
         {
-            return new BlockchainSettingsResponse()
+            return new BlockchainExplorerResponse()
             {
                 ETag = domainModel.ETag,
-                Type = domainModel.Type,
-                HotWalletAddress = domainModel.HotWalletAddress,
-                ApiUrl = domainModel.ApiUrl,
-                SignServiceUrl = domainModel.SignServiceUrl
+                BlockchainType = domainModel.BlockchainType,
+                ExplorerUrlTemplate = domainModel.ExplorerUrlTemplate,
+                RecordId = domainModel.RecordId
             };
         }
 
-        private BlockchainSetting MapToDomain(BlockchainSettingsCreateRequest request)
+        private BlockchainExplorer MapToDomain(BlockchainExplorerCreateRequest request)
         {
-            return new BlockchainSetting()
+            return new BlockchainExplorer()
             {
-                Type = request.Type,
-                HotWalletAddress = request.HotWalletAddress,
-                ApiUrl = request.ApiUrl,
-                SignServiceUrl = request.SignServiceUrl
+                BlockchainType = request.BlockchainType,
+                ExplorerUrlTemplate = request.ExplorerUrlTemplate,
+                RecordId = Guid.NewGuid().ToString()
             };
         }
 
-        private BlockchainSetting MapToDomain(BlockchainSettingsUpdateRequest request)
+        private BlockchainExplorer MapToDomain(BlockchainExplorerUpdateRequest request)
         {
-            return new BlockchainSetting()
+            return new BlockchainExplorer()
             {
                 ETag = request.ETag,
-                Type = request.Type,
-                HotWalletAddress = request.HotWalletAddress,
-                ApiUrl = request.ApiUrl,
-                SignServiceUrl = request.SignServiceUrl
+                BlockchainType = request.BlockchainType,
+                ExplorerUrlTemplate = request.ExplorerUrlTemplate,
+                RecordId = request.RecordId
             };
         }
 
