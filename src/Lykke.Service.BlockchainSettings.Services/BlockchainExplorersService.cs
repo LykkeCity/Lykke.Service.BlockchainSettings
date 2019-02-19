@@ -1,13 +1,12 @@
-﻿using System;
-using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+﻿using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+using Lykke.Service.BlockchainSettings.Core.Exceptions;
 using Lykke.Service.BlockchainSettings.Core.Repositories;
 using Lykke.Service.BlockchainSettings.Core.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Lykke.Service.BlockchainSettings.Core;
-using Lykke.Service.BlockchainSettings.Core.Exceptions;
 
 namespace Lykke.Service.BlockchainSettings.Services
 {
@@ -25,7 +24,6 @@ namespace Lykke.Service.BlockchainSettings.Services
         ///<inheritdoc/>
         public async Task<IEnumerable<BlockchainExplorer>> GetAllAsync()
         {
-            int take = 50;
             List< BlockchainExplorer> list = new List<BlockchainExplorer>(50);
             string continuationToken = null;
             do
