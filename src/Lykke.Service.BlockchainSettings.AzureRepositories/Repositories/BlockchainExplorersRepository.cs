@@ -96,6 +96,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
                     model.ETag = entity.ETag;
                     model.PartitionKey = entity.PartitionKey;
                     model.RowKey = entity.RowKey;
+                    model.Name = entity.Name;
 
                     return true;
                 });

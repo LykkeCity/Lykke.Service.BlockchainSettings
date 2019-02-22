@@ -11,6 +11,9 @@ namespace Lykke.Service.BlockchainSettings.Contract.Responses
         [DataMember(Name = "blockchainType")]
         public string BlockchainType { get; set; }
 
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+
         [DataMember(Name = "recordId")]
         public string RecordId { get; set; }
 

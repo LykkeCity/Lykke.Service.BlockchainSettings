@@ -17,6 +17,8 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
 
         public string RecordId { get; set; }
 
+        public string Name { get; set; }
+
         public string ExplorerUrlTemplate { get; set; }
 
         public BlockchainExplorer ToDomain()
@@ -26,6 +28,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
                 BlockchainType = this.BlockchainType,
                 ExplorerUrlTemplate = this.ExplorerUrlTemplate,
                 RecordId = this.RecordId,
+                Name = this.Name,
                 ETag = this.ETag
             };
         }
@@ -49,7 +52,8 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
                 ExplorerUrlTemplate = explorer.ExplorerUrlTemplate,
                 ETag = explorer.ETag,
                 PartitionKey = GetPartitionKey(explorer.BlockchainType),
-                RowKey = GetRowKey(explorer.RecordId)
+                RowKey = GetRowKey(explorer.RecordId),
+                Name = explorer.Name
             };
         }
     }

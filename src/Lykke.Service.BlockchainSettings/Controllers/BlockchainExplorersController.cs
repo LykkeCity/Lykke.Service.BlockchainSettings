@@ -209,7 +209,8 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
                 ETag = domainModel.ETag,
                 BlockchainType = domainModel.BlockchainType,
                 ExplorerUrlTemplate = domainModel.ExplorerUrlTemplate,
-                RecordId = domainModel.RecordId
+                RecordId = domainModel.RecordId,
+                Name = domainModel.Name
             };
         }
 
@@ -219,7 +220,8 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
             {
                 BlockchainType = request.BlockchainType,
                 ExplorerUrlTemplate = request.ExplorerUrlTemplate,
-                RecordId = Guid.NewGuid().ToString()
+                RecordId = Guid.NewGuid().ToString(),
+                Name = request.Name
             };
         }
 
@@ -230,7 +232,8 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
                 ETag = request.ETag,
                 BlockchainType = request.BlockchainType,
                 ExplorerUrlTemplate = request.ExplorerUrlTemplate,
-                RecordId = request.RecordId
+                RecordId = request.RecordId,
+                Name = request.Name
             };
         }
 

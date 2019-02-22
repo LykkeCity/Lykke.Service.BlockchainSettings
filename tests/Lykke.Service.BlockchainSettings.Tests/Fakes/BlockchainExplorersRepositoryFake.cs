@@ -64,7 +64,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Fakes
                 throw new DoesNotExistException($"");
 
             Explorers.Remove(existingExplorer);
-            Explorers.Add(existingExplorer);
+            Explorers.Add(explorer);
 
             return Task.CompletedTask;
         }
