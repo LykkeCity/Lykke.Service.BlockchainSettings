@@ -44,6 +44,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             var allSettings = await client.GetAllExplorersAsync();
             await client.CreateBlockchainExplorerAsync(new BlockchainExplorerCreateRequest
             {
+                Name = "Ropsten1",
                 BlockchainType = "EthereumClassic",
                 ExplorerUrlTemplate = "https://ropsten.etherscan.io/tx/{tx-hash}"
             });
@@ -71,6 +72,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
 
             await client.CreateBlockchainExplorerAsync(new BlockchainExplorerCreateRequest
             {
+                Name = "RopstenX",
                 BlockchainType = blockchainType,
                 ExplorerUrlTemplate = ropstenTemplate
             });
@@ -84,6 +86,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
 
             await client.UpdateBlockchainExplorerAsync(new BlockchainExplorerUpdateRequest()
             {
+                Name = "Ropsten1",
                 BlockchainType = ropstenEthereum.BlockchainType,
                 RecordId = ropstenEthereum.RecordId,
                 ExplorerUrlTemplate = ropstenEthereum.ExplorerUrlTemplate,
@@ -91,11 +94,12 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             });
 
             var allSettings3 = await client.GetBlockchainExplorerByTypeAsync(blockchainType);
-            var mainnetEthereum = allSettings2
+            var mainnetEthereum = allSettings3
                 .Collection
                 .FirstOrDefault(x => x.ExplorerUrlTemplate == mainnetTemplate);
 
             Assert.IsTrue(mainnetEthereum != null);
+            Assert.IsTrue(mainnetEthereum.Name == "Ropsten1");
 
             var record =
                 await client.GetBlockchainExplorerAsync(mainnetEthereum.BlockchainType, mainnetEthereum.RecordId);
@@ -116,7 +120,8 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             await client.CreateBlockchainExplorerAsync(new BlockchainExplorerCreateRequest
             {
                 BlockchainType = blockchainType,
-                ExplorerUrlTemplate = ropstenTemplate
+                ExplorerUrlTemplate = ropstenTemplate,
+                Name = "Ropsten1"
             });
         }
     }

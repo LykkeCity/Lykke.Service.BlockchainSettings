@@ -37,7 +37,8 @@ namespace Lykke.Service.BlockchainSettings.Tests
                 BlockchainType = "EthereumClassic",
                 ETag = DateTime.UtcNow.ToString(),
                 RecordId = Guid.NewGuid().ToString(),
-                ExplorerUrlTemplate = "https://some-blockchain-explorer.bit/{tx-hash}"
+                ExplorerUrlTemplate = "https://some-blockchain-explorer.bit/{tx-hash}",
+                Name = "Ropsten"
             };
 
             var explorers = new List<BlockchainExplorer>()
