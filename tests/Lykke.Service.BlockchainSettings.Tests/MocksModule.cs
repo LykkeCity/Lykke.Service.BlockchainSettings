@@ -24,13 +24,15 @@ namespace Lykke.Service.BlockchainSettings.Tests
     {
         private readonly IReloadingManager<AppSettings> _settings;
         private static BlockchainExplorersRepositoryFake _blockchainExplorersRepository;
+        private static BlockchainSettingRepositoryFake _blockchainSettingsRepository;
+        private static DistributedCacheFake _cacheFake;
 
         public MocksModule(IReloadingManager<AppSettings> settings)
         {
             _settings = settings;
         }
 
-        public static void ReInitBlockchainRepository()
+        public static void ReInitBlockchainExplorersRepository()
         {
             var blockchainExplorer = new BlockchainExplorer()
             {
@@ -50,26 +52,39 @@ namespace Lykke.Service.BlockchainSettings.Tests
             _blockchainExplorersRepository.Explorers.AddRange(explorers);
         }
 
-        protected override void Load(ContainerBuilder builder)
+        public static void ReInitBlockchainSettingsRepository()
         {
-            var healthServiceMock = new Mock<IHealthService>();
-            healthServiceMock.Setup(x => x.GetHealthIssues()).Returns(new List<HealthIssue>());
-
             var ethClassicSetting = new BlockchainSetting()
             {
                 Type = "EthereumClassic",
                 ETag = DateTime.UtcNow.ToString(),
                 HotWalletAddress = "0x5ADBF411FAF2595698D80B7f93D570Dd16d7F4B2",
                 SignServiceUrl = "http://ethereum-classic-sign.lykke-service.com",
-                ApiUrl = "http://ethereum-classic-api.lykke-service.com"
+                ApiUrl = "http://ethereum-classic-api.lykke-service.com",
+                AreCashinsDisabled = false,
+                CashoutAggregation = null,
+                IsExclusiveWithdrawalsRequired = false
             };
             var listSettings = new List<BlockchainSetting>()
             {
                 ethClassicSetting
             };
 
+            _blockchainSettingsRepository.Settings.Clear();
+            _blockchainSettingsRepository.Settings.AddRange(listSettings);
+            _cacheFake.ClearCache();
+        }
+
+        protected override void Load(ContainerBuilder builder)
+        {
+            var healthServiceMock = new Mock<IHealthService>();
+            healthServiceMock.Setup(x => x.GetHealthIssues()).Returns(new List<HealthIssue>());
+
             #region BlockchainSettingsService
 
+            _cacheFake = new DistributedCacheFake();
+            _blockchainSettingsRepository = new BlockchainSettingRepositoryFake(null);
+            ReInitBlockchainSettingsRepository();
             var blockchainValidationService = new Mock<IBlockchainValidationService>();
             blockchainValidationService.Setup(x =>
                     x.ValidateHotwalletAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
@@ -77,8 +92,8 @@ namespace Lykke.Service.BlockchainSettings.Tests
             blockchainValidationService.Setup(x =>
                     x.ValidateServiceUrlAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
-            var blockchainSettingsRepository = new BlockchainSettingRepositoryFake(listSettings);
-            var blockchainSettingsService = new BlockchainSettingsService(blockchainSettingsRepository, 
+            
+            var blockchainSettingsService = new BlockchainSettingsService(_blockchainSettingsRepository, 
                 blockchainValidationService.Object);
             var accessTokenService = new Mock<IAccessTokenService>();
             accessTokenService.Setup(x => x.GetTokenAccess(It.Is<string>(y => y == BlockchainSettingsTest.ReadKey)))
@@ -87,11 +102,11 @@ namespace Lykke.Service.BlockchainSettings.Tests
                 .Returns(ApiKeyAccessType.Write);
             accessTokenService.Setup(x => x.GetTokenAccess(It.Is<string>(y => y == BlockchainSettingsTest.ReadWriteKey)))
                 .Returns(ApiKeyAccessType.ReadWrite);
-            
+
             builder.RegisterInstance(healthServiceMock.Object).As<IHealthService>().SingleInstance();
             BlockchainSettingsServiceCached cachedService = new BlockchainSettingsServiceCached(
                 blockchainSettingsService,
-                new DistributedCacheFake()
+                _cacheFake
             );
             
             builder.RegisterInstance(accessTokenService.Object);
@@ -102,7 +117,7 @@ namespace Lykke.Service.BlockchainSettings.Tests
             #region BlockchainSettingsService
 
             _blockchainExplorersRepository = new BlockchainExplorersRepositoryFake(null);
-            ReInitBlockchainRepository();
+            ReInitBlockchainExplorersRepository();
             var blockchainExplorersService = new BlockchainExplorersService(_blockchainExplorersRepository);
 
 

@@ -18,7 +18,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         [SetUp]
         public void SetupBeforeEachTest()
         {
-            MocksModule.ReInitBlockchainRepository();
+            MocksModule.ReInitBlockchainExplorersRepository();
         }
 
         [TestCase(true)]
@@ -74,7 +74,8 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             {
                 Name = "RopstenX",
                 BlockchainType = blockchainType,
-                ExplorerUrlTemplate = ropstenTemplate
+                ExplorerUrlTemplate = ropstenTemplate,
+                
             });
 
             var allSettings2 = await client.GetAllExplorersAsync();

@@ -23,5 +23,16 @@ namespace Lykke.Service.BlockchainSettings.Contract.Requests
         [Required]
         [DataMember(Name = "hotWalletAddress")]
         public string HotWalletAddress { get; set; }
+
+        [Required]
+        [DataMember(Name = "areCashinsDisabled")]
+        public bool AreCashinsDisabled { get; set; }
+
+        [Required]
+        [DataMember(Name = "isExclusiveWithdrawalsRequired")]
+        public bool IsExclusiveWithdrawalsRequired { get; set; }
+
+        [DataMember(Name = "cashoutAggregation")]
+        public CashoutAggregationSettingDto CashoutAggregation { get; set; }
     }
 }

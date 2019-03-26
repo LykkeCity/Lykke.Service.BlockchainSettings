@@ -1,4 +1,6 @@
-﻿namespace Lykke.Service.BlockchainSettings.Core.Domain.Settings
+﻿using JetBrains.Annotations;
+
+namespace Lykke.Service.BlockchainSettings.Core.Domain.Settings
 {
     public class BlockchainSetting
     {
@@ -11,5 +13,12 @@
         public string SignServiceUrl { get; set; }
 
         public string HotWalletAddress { get; set; }
+
+        public bool AreCashinsDisabled { get; set; }
+
+        public bool IsExclusiveWithdrawalsRequired { get; set; }
+
+        [CanBeNull]
+        public CashoutAggregationSetting CashoutAggregation { get; set; }
     }
 }

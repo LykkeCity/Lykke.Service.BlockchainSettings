@@ -95,6 +95,10 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
                 model.ETag = entity.ETag;
                 model.PartitionKey = entity.PartitionKey;
                 model.RowKey = entity.RowKey;
+                model.AreCashinsDisabled = entity.AreCashinsDisabled;
+                model.IsExclusiveWithdrawalsRequired = entity.IsExclusiveWithdrawalsRequired;
+                model.CashoutAggregationAgeThresholdSeconds = entity.CashoutAggregationAgeThresholdSeconds;
+                model.CashoutAggregationCountThreshold = entity.CashoutAggregationCountThreshold;
 
                 return true;
             });
