@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Lykke.Service.BlockchainExplorers.Controllers
 {
@@ -33,7 +34,6 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         /// <returns></returns>
         [HttpGet("all")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
-        [SwaggerOperation("GetAll")]
         [ProducesResponseType(typeof(BlockchainExplorersCollectionResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -60,7 +60,6 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         /// <returns></returns>
         [HttpGet("{type}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
-        [SwaggerOperation("Get")]
         [ProducesResponseType(typeof(BlockchainExplorersCollectionResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -87,7 +86,6 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         /// <returns></returns>
         [HttpGet("{type}/{recordId}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
-        [SwaggerOperation("Get")]
         [ProducesResponseType(typeof(BlockchainExplorerResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -111,7 +109,6 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         /// <returns></returns>
         [HttpPost]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
-        [SwaggerOperation("Create")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
@@ -143,7 +140,6 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         /// <returns></returns>
         [HttpPut]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
-        [SwaggerOperation("Update")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
@@ -179,7 +175,6 @@ namespace Lykke.Service.BlockchainExplorers.Controllers
         /// <returns></returns>
         [HttpDelete("{type}/{recordId}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
-        [SwaggerOperation("Remove")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
