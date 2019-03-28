@@ -99,6 +99,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Repositories
                 model.IsExclusiveWithdrawalsRequired = entity.IsExclusiveWithdrawalsRequired;
                 model.CashoutAggregationAgeThresholdSeconds = entity.CashoutAggregationAgeThresholdSeconds;
                 model.CashoutAggregationCountThreshold = entity.CashoutAggregationCountThreshold;
+                model.AreCashoutsDisabled = entity.AreCashoutsDisabled;
 
                 return true;
             });

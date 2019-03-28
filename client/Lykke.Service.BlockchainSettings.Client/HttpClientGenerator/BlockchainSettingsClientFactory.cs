@@ -21,9 +21,10 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
         public IBlockchainSettingsClient CreateNew(BlockchainSettingsServiceClientSettings settings,
             bool withCaching = true,
             IClientCacheManager clientCacheManager = null,
+            bool disableRetries = false,
             params DelegatingHandler[] handlers)
         {
-            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, withCaching, clientCacheManager, handlers);
+            return CreateNew(settings?.ServiceUrl, settings?.ApiKey, withCaching, clientCacheManager, disableRetries, handlers);
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
         /// <param name="handlers"></param>
         /// <returns></returns>
         public IBlockchainSettingsClient CreateNew(string url, string apiKey, bool withCaching = true,
-            IClientCacheManager clientCacheManager = null, params DelegatingHandler[] handlers)
+            IClientCacheManager clientCacheManager = null, bool disableRetries = false, params DelegatingHandler[] handlers)
         {
             var builder = new HttpClientGeneratorBuilder(url)
                 .WithAdditionalDelegatingHandler(new ApiKeyHeaderHandler(apiKey))
@@ -56,6 +57,11 @@ namespace Lykke.Service.BlockchainSettings.Client.HttpClientGenerator
             foreach (var handler in handlers)
             {
                 builder.WithAdditionalDelegatingHandler(handler);
+            }
+
+            if (disableRetries)
+            {
+                builder.WithoutRetries();
             }
 
             clientCacheManager = clientCacheManager ?? new ClientCacheManager();

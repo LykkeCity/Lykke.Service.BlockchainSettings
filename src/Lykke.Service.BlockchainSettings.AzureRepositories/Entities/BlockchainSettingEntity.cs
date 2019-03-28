@@ -24,6 +24,8 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
 
         public bool AreCashinsDisabled { get; set; }
 
+        public bool AreCashoutsDisabled { get; set; }
+
         public bool IsExclusiveWithdrawalsRequired { get; set; }
 
         public int? CashoutAggregationCountThreshold { get; set; }
@@ -50,6 +52,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
                 Type = this.Type,
                 ETag = this.ETag,
                 AreCashinsDisabled = this.AreCashinsDisabled,
+                AreCashoutsDisabled = this.AreCashoutsDisabled,
                 CashoutAggregation = cashoutAggregation,
                 IsExclusiveWithdrawalsRequired = this.IsExclusiveWithdrawalsRequired
             };
@@ -80,6 +83,7 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
                 IsExclusiveWithdrawalsRequired = settings.IsExclusiveWithdrawalsRequired,
                 CashoutAggregationAgeThresholdSeconds = settings.CashoutAggregation?.AgeThreshold.TotalSeconds,
                 CashoutAggregationCountThreshold = settings.CashoutAggregation?.CountThreshold,
+                AreCashoutsDisabled = settings.AreCashoutsDisabled
             };
         }
     }

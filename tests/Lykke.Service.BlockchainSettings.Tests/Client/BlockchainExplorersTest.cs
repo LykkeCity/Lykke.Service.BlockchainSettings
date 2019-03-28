@@ -27,6 +27,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", cacheEnabled, cacheManager,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
             var allSettings = await client.GetAllExplorersAsync();
 
@@ -39,6 +40,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", true, cacheManager,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
 
             var allSettings = await client.GetAllExplorersAsync();
@@ -64,7 +66,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         [Test]
         public async Task CheckBasicFlow()
         {
-            var client = Factory.CreateNew(Fixture.ClientUrl, "default", false, null,
+            var client = Factory.CreateNew(Fixture.ClientUrl, "default", false, null, false,
                 new RequestInterceptorHandler(Fixture.Client));
             var ropstenTemplate = "https://ropsten.etherscan.io/tx/{tx-hash}";
             var mainnetTemplate = "https://etherscan.io/tx/{tx-hash}";
@@ -114,6 +116,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         public async Task CreateBlockchainExplorerAsync__UrlIsNotValid__ThrowsNotOkException()
         {
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", false, null,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
             var ropstenTemplate = "http://stellar/m                     ail1/{tx-hash}";
             var blockchainType = "EthereumClassic";

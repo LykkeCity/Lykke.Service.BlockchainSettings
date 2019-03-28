@@ -175,6 +175,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 ApiUrl = domainModel.ApiUrl,
                 SignServiceUrl = domainModel.SignServiceUrl,
                 AreCashinsDisabled = domainModel.AreCashinsDisabled,
+                AreCashoutsDisabled = domainModel.AreCashoutsDisabled,
                 CashoutAggregation = MapCashoutAggregationToResponse(domainModel.CashoutAggregation),
                 IsExclusiveWithdrawalsRequired = domainModel.IsExclusiveWithdrawalsRequired
             };
@@ -189,6 +190,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 ApiUrl = request.ApiUrl,
                 SignServiceUrl = request.SignServiceUrl,
                 AreCashinsDisabled = request.AreCashinsDisabled,
+                AreCashoutsDisabled = request.AreCashoutsDisabled,
                 CashoutAggregation = MapCashoutAggregationToDomain(request.CashoutAggregation),
                 IsExclusiveWithdrawalsRequired = request.IsExclusiveWithdrawalsRequired
             };
@@ -204,6 +206,7 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 ApiUrl = request.ApiUrl,
                 SignServiceUrl = request.SignServiceUrl,
                 AreCashinsDisabled = request.AreCashinsDisabled,
+                AreCashoutsDisabled = request.AreCashoutsDisabled,
                 CashoutAggregation = MapCashoutAggregationToDomain(request.CashoutAggregation),
                 IsExclusiveWithdrawalsRequired = request.IsExclusiveWithdrawalsRequired
             };

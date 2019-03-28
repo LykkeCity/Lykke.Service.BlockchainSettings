@@ -26,7 +26,7 @@ namespace Lykke.Service.BlockchainSettings.Services
             {
                 //TODO: WAIT FOR NEW IBlockchainApiClient on 2.1 framework (httpClientFactory will be there)
                 //DIRTY HACK:
-                using (var client = new BlockchainApiClient(_logFactory, apiUrl, 3))
+                using (var client = new BlockchainApiClient(_logFactory, apiUrl, 1))
                 {
                     isAddressValid = await client.IsAddressValidAsync(address);
                 }
@@ -45,7 +45,7 @@ namespace Lykke.Service.BlockchainSettings.Services
 
             try
             {
-                using (var client = new BlockchainApiClient(_logFactory, serviceUrl, 3))
+                using (var client = new BlockchainApiClient(_logFactory, serviceUrl, 1))
                 {
                     var isAlive = await client.GetIsAliveAsync();
                     isUrlValid = isAlive != null;

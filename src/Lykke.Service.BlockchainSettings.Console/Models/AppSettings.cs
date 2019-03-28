@@ -30,11 +30,9 @@ namespace Lykke.Service.BlockchainSettings.Console.Models
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string Type { get; set; }
 
-        [HttpCheck("/api/isalive")]
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string ApiUrl { get; set; }
 
-        [HttpCheck("/api/isalive")]
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string SignServiceUrl { get; set; }
 
@@ -43,6 +41,9 @@ namespace Lykke.Service.BlockchainSettings.Console.Models
 
         [Optional]
         public bool AreCashinsDisabled { get; set; }
+
+        [Optional]
+        public bool AreCashoutsDisabled { get; set; }
 
         [Optional]
         public bool IsExclusiveWithdrawalsRequired { get; set; }
