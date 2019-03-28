@@ -23,6 +23,9 @@ namespace Lykke.Service.BlockchainSettings.Contract.Responses
         [DataMember(Name = "areCashinsDisabled")]
         public bool AreCashinsDisabled { get; set; }
 
+        [DataMember(Name = "areCashoutsDisabled")]
+        public bool AreCashoutsDisabled { get; set; }
+
         [DataMember(Name = "isExclusiveWithdrawalsRequired")]
         public bool IsExclusiveWithdrawalsRequired { get; set; }
 

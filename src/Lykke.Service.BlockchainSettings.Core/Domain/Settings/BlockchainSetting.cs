@@ -20,5 +20,7 @@ namespace Lykke.Service.BlockchainSettings.Core.Domain.Settings
 
         [CanBeNull]
         public CashoutAggregationSetting CashoutAggregation { get; set; }
+
+        public bool AreCashoutsDisabled { get; set; }
     }
 }

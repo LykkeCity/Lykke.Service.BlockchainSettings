@@ -16,6 +16,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", cacheEnabled, cacheManager,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
             var isAliveResponse = await client.GetIsAliveAsync();
 

@@ -29,6 +29,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", cacheEnabled, cacheManager,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
             await cacheManager.InvalidateCacheAsync();
             var allSettings = await client.GetAllSettingsAsync();
@@ -42,6 +43,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
         {
             var cacheManager = new ClientCacheManager();
             var client = Factory.CreateNew(Fixture.ClientUrl, "default", true, cacheManager,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
             await cacheManager.InvalidateCacheAsync();
             var allSettings = await client.GetAllSettingsAsync();
@@ -72,6 +74,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
                 "default", 
                 false, 
                 null,
+                false,
                 new RequestInterceptorHandler(Fixture.Client));
 
             var createRequest = new BlockchainSettingsCreateRequest()
@@ -81,6 +84,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
                 SignServiceUrl = "http://fake.sign.com/",
                 ApiUrl = "http://fake.api.com/",
                 AreCashinsDisabled = true,
+                AreCashoutsDisabled = true,
                 CashoutAggregation = new CashoutAggregationSettingDto()
                 {
                     CountThreshold = 1,
@@ -103,6 +107,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Client
             Assert.IsTrue(createdSetting.CashoutAggregation.CountThreshold == createRequest.CashoutAggregation.CountThreshold);
             Assert.IsTrue(createdSetting.CashoutAggregation.AgeThreshold == createRequest.CashoutAggregation.AgeThreshold);
             Assert.IsTrue(createdSetting.AreCashinsDisabled == createRequest.AreCashinsDisabled);
+            Assert.IsTrue(createdSetting.AreCashoutsDisabled == createRequest.AreCashoutsDisabled);
         }
     }
 }

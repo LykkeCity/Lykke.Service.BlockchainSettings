@@ -70,7 +70,7 @@ namespace Lykke.Service.BlockchainSettings.Console
         private static async Task CreateSettingsAsync(string urlToSettingsWithBlockchainIntegrationSection, string blockchainSettingsUrl, string apiKey)
         {
             var uri = new Uri(urlToSettingsWithBlockchainIntegrationSection);
-            var appSettings = Lykke.SettingsReader.SettingsReader.ReadGeneralSettings<AppSettings>(uri);
+            var appSettings = SettingsReader.SettingsReader.ReadGeneralSettings<AppSettings>(uri);
             var list = appSettings.BlockchainsIntegration.Blockchains.ToList();
             var blockchainSettingsClientFactory = new BlockchainSettingsClientFactory();
             var cacheManager = new ClientCacheManager();
@@ -109,6 +109,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                             SignServiceUrl = item.SignServiceUrl,
                             ApiUrl = item.ApiUrl,
                             AreCashinsDisabled = item.AreCashinsDisabled,
+                            AreCashoutsDisabled = item.AreCashoutsDisabled,
                             CashoutAggregation = item.CashoutAggregation != null
                                 ? new CashoutAggregationSettingDto()
                                 {
@@ -129,6 +130,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                         SignServiceUrl = item.SignServiceUrl,
                         ApiUrl = item.ApiUrl,
                         AreCashinsDisabled = item.AreCashinsDisabled,
+                        AreCashoutsDisabled = item.AreCashoutsDisabled,
                         CashoutAggregation = item.CashoutAggregation != null
                             ? new CashoutAggregationSettingDto()
                             {
