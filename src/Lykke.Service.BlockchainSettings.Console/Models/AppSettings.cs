@@ -46,7 +46,7 @@ namespace Lykke.Service.BlockchainSettings.Console.Models
         public bool AreCashoutsDisabled { get; set; }
 
         [Optional]
-        public bool IsExclusiveWithdrawalsRequired { get; set; }
+        public bool ExclusiveWithdrawalsRequired { get; set; }
 
         [Optional]
         public CashoutAggregationModel CashoutAggregation { get; set; }
