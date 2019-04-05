@@ -117,7 +117,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                                     AgeThreshold = item.CashoutAggregation.AgeThreshold,
                                 }
                                 : null,
-                            IsExclusiveWithdrawalsRequired = item.IsExclusiveWithdrawalsRequired
+                            IsExclusiveWithdrawalsRequired = item.ExclusiveWithdrawalsRequired
                         });
 
                         continue;
@@ -138,7 +138,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                                 AgeThreshold = item.CashoutAggregation.AgeThreshold,
                             }
                             : null,
-                        IsExclusiveWithdrawalsRequired = item.IsExclusiveWithdrawalsRequired
+                        IsExclusiveWithdrawalsRequired = item.ExclusiveWithdrawalsRequired
                     });
 
                     System.Console.WriteLine($"{item.Type} has been processed");
