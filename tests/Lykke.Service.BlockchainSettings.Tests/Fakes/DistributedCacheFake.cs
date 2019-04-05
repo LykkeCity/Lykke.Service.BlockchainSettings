@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace Lykke.Service.BlockchainSettings.Tests.Fakes
 {
@@ -56,6 +54,11 @@ namespace Lykke.Service.BlockchainSettings.Tests.Fakes
             Remove(key);
 
             return Task.FromResult(0);
+        }
+
+        public void ClearCache()
+        {
+            MemoryCacheDict = new Dictionary<string, byte[]>();
         }
     }
 }

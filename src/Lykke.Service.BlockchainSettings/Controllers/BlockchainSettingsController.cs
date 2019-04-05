@@ -1,19 +1,18 @@
 ﻿using Lykke.Common.Api.Contract.Responses;
-using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
-using Lykke.Service.BlockchainSettings.Core.Exceptions;
+using Lykke.Service.BlockchainSettings.Contract;
 using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Lykke.Service.BlockchainSettings.Contract.Responses;
+using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
+using Lykke.Service.BlockchainSettings.Core.Exceptions;
 using Lykke.Service.BlockchainSettings.Shared.Attributes;
-using Lykke.Service.BlockchainSettings.Shared.Cache;
+using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
+using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Lykke.Service.BlockchainSettings.Shared.Cache.Interfaces;
-using Lykke.Service.BlockchainSettings.Shared.Settings.ServiceSettings;
 
 namespace Lykke.Service.BlockchainSettings.Controllers
 {
@@ -33,7 +32,6 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// <returns></returns>
         [HttpGet("all")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
-        [SwaggerOperation("GetAll")]
         [ProducesResponseType(typeof(BlockchainSettingsCollectionResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -60,7 +58,6 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// <returns></returns>
         [HttpGet("{type}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Read)]
-        [SwaggerOperation("Get")]
         [ProducesResponseType(typeof(BlockchainSettingsCreateRequest), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -84,7 +81,6 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// <returns></returns>
         [HttpPost]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
-        [SwaggerOperation("Create")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
@@ -116,7 +112,6 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// <returns></returns>
         [HttpPut]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
-        [SwaggerOperation("Update")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.Conflict)]
@@ -148,7 +143,6 @@ namespace Lykke.Service.BlockchainSettings.Controllers
         /// <returns></returns>
         [HttpDelete("{type}")]
         [ApiKeyAuthorize(ApiKeyAccessType.Write)]
-        [SwaggerOperation("Remove")]
         [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -179,7 +173,11 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 Type = domainModel.Type,
                 HotWalletAddress = domainModel.HotWalletAddress,
                 ApiUrl = domainModel.ApiUrl,
-                SignServiceUrl = domainModel.SignServiceUrl
+                SignServiceUrl = domainModel.SignServiceUrl,
+                AreCashinsDisabled = domainModel.AreCashinsDisabled,
+                AreCashoutsDisabled = domainModel.AreCashoutsDisabled,
+                CashoutAggregation = MapCashoutAggregationToResponse(domainModel.CashoutAggregation),
+                IsExclusiveWithdrawalsRequired = domainModel.IsExclusiveWithdrawalsRequired
             };
         }
 
@@ -190,7 +188,11 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 Type = request.Type,
                 HotWalletAddress = request.HotWalletAddress,
                 ApiUrl = request.ApiUrl,
-                SignServiceUrl = request.SignServiceUrl
+                SignServiceUrl = request.SignServiceUrl,
+                AreCashinsDisabled = request.AreCashinsDisabled,
+                AreCashoutsDisabled = request.AreCashoutsDisabled,
+                CashoutAggregation = MapCashoutAggregationToDomain(request.CashoutAggregation),
+                IsExclusiveWithdrawalsRequired = request.IsExclusiveWithdrawalsRequired
             };
         }
 
@@ -202,7 +204,11 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 Type = request.Type,
                 HotWalletAddress = request.HotWalletAddress,
                 ApiUrl = request.ApiUrl,
-                SignServiceUrl = request.SignServiceUrl
+                SignServiceUrl = request.SignServiceUrl,
+                AreCashinsDisabled = request.AreCashinsDisabled,
+                AreCashoutsDisabled = request.AreCashoutsDisabled,
+                CashoutAggregation = MapCashoutAggregationToDomain(request.CashoutAggregation),
+                IsExclusiveWithdrawalsRequired = request.IsExclusiveWithdrawalsRequired
             };
         }
 
@@ -218,6 +224,24 @@ namespace Lykke.Service.BlockchainSettings.Controllers
                 StatusCode = statusCode,
                 Content = Newtonsoft.Json.JsonConvert.SerializeObject(errorResponse)
             };
+        }
+
+        private CashoutAggregationSettingDto MapCashoutAggregationToResponse(CashoutAggregationSetting cashoutAggregation)
+        {
+            return cashoutAggregation != null ? new CashoutAggregationSettingDto()
+            {
+                CountThreshold = cashoutAggregation.CountThreshold,
+                AgeThreshold = cashoutAggregation.AgeThreshold
+            } : null;
+        }
+
+        private CashoutAggregationSetting MapCashoutAggregationToDomain(CashoutAggregationSettingDto cashoutAggregationDto)
+        {
+            return cashoutAggregationDto != null ? new CashoutAggregationSetting()
+            {
+                CountThreshold = cashoutAggregationDto.CountThreshold,
+                AgeThreshold = cashoutAggregationDto.AgeThreshold
+            } : null;
         }
 
         #endregion

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Lykke.HttpClientGenerator.Caching;
+﻿using Lykke.HttpClientGenerator.Caching;
 using Lykke.Service.BlockchainSettings.Client.HttpClientGenerator;
 using Lykke.Service.BlockchainSettings.Console.Models;
+using Lykke.Service.BlockchainSettings.Contract;
 using Lykke.Service.BlockchainSettings.Contract.Requests;
 using Microsoft.Extensions.CommandLineUtils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.BlockchainSettings.Console
 {
@@ -70,11 +70,11 @@ namespace Lykke.Service.BlockchainSettings.Console
         private static async Task CreateSettingsAsync(string urlToSettingsWithBlockchainIntegrationSection, string blockchainSettingsUrl, string apiKey)
         {
             var uri = new Uri(urlToSettingsWithBlockchainIntegrationSection);
-            var appSettings = Lykke.SettingsReader.SettingsReader.ReadGeneralSettings<AppSettings>(uri);
+            var appSettings = SettingsReader.SettingsReader.ReadGeneralSettings<AppSettings>(uri);
             var list = appSettings.BlockchainsIntegration.Blockchains.ToList();
             var blockchainSettingsClientFactory = new BlockchainSettingsClientFactory();
             var cacheManager = new ClientCacheManager();
-            var client  = blockchainSettingsClientFactory.CreateNew(blockchainSettingsUrl, apiKey, true, cacheManager);
+            var client = blockchainSettingsClientFactory.CreateNew(blockchainSettingsUrl, apiKey, true, cacheManager);
 
             try
             {
@@ -93,34 +93,63 @@ namespace Lykke.Service.BlockchainSettings.Console
 
             foreach (var item in list)
             {
-                System.Console.WriteLine($"Processing {item.Type}");
-
-                var existing = await client.GetSettingsByTypeAsync(item.Type);
-
-                if (existing != null)
+                try
                 {
-                    System.Console.WriteLine($"{item.Type} setting already exists");
-                    await client.UpdateAsync(new BlockchainSettingsUpdateRequest()
+                    System.Console.WriteLine($"Processing {item.Type}");
+                    var existing = await client.GetSettingsByTypeAsync(item.Type);
+
+                    if (existing != null)
                     {
-                        ETag = existing.ETag,
+                        System.Console.WriteLine($"{item.Type} setting already exists");
+                        await client.UpdateAsync(new BlockchainSettingsUpdateRequest()
+                        {
+                            ETag = existing.ETag,
+                            Type = item.Type,
+                            HotWalletAddress = item.HotWalletAddress,
+                            SignServiceUrl = item.SignServiceUrl,
+                            ApiUrl = item.ApiUrl,
+                            AreCashinsDisabled = item.AreCashinsDisabled,
+                            AreCashoutsDisabled = item.AreCashoutsDisabled,
+                            CashoutAggregation = item.CashoutAggregation != null
+                                ? new CashoutAggregationSettingDto()
+                                {
+                                    CountThreshold = item.CashoutAggregation.CountThreshold,
+                                    AgeThreshold = item.CashoutAggregation.AgeThreshold,
+                                }
+                                : null,
+                            IsExclusiveWithdrawalsRequired = item.ExclusiveWithdrawalsRequired
+                        });
+
+                        continue;
+                    }
+
+                    await client.CreateAsync(new BlockchainSettingsCreateRequest()
+                    {
                         Type = item.Type,
                         HotWalletAddress = item.HotWalletAddress,
                         SignServiceUrl = item.SignServiceUrl,
-                        ApiUrl = item.ApiUrl
+                        ApiUrl = item.ApiUrl,
+                        AreCashinsDisabled = item.AreCashinsDisabled,
+                        AreCashoutsDisabled = item.AreCashoutsDisabled,
+                        CashoutAggregation = item.CashoutAggregation != null
+                            ? new CashoutAggregationSettingDto()
+                            {
+                                CountThreshold = item.CashoutAggregation.CountThreshold,
+                                AgeThreshold = item.CashoutAggregation.AgeThreshold,
+                            }
+                            : null,
+                        IsExclusiveWithdrawalsRequired = item.ExclusiveWithdrawalsRequired
                     });
 
-                    continue;
+                    System.Console.WriteLine($"{item.Type} has been processed");
                 }
-
-                await client.CreateAsync(new BlockchainSettingsCreateRequest()
+                catch (Exception e)
                 {
-                    Type = item.Type,
-                    HotWalletAddress = item.HotWalletAddress,
-                    SignServiceUrl = item.SignServiceUrl,
-                    ApiUrl = item.ApiUrl,
-                });
-
-                System.Console.WriteLine($"{item.Type} has been processed");
+                    System.Console.WriteLine($"Exception has appeared during processing {item.Type}");
+                    System.Console.WriteLine(e.Message);
+                    System.Console.WriteLine();
+                    System.Console.WriteLine($"Skipping {item.Type}");
+                }
             }
         }
     }

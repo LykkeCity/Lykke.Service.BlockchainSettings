@@ -30,15 +30,32 @@ namespace Lykke.Service.BlockchainSettings.Console.Models
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string Type { get; set; }
 
-        [HttpCheck("/api/isalive")]
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string ApiUrl { get; set; }
 
-        [HttpCheck("/api/isalive")]
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string SignServiceUrl { get; set; }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign)]
         public string HotWalletAddress { get; set; }
+
+        [Optional]
+        public bool AreCashinsDisabled { get; set; }
+
+        [Optional]
+        public bool AreCashoutsDisabled { get; set; }
+
+        [Optional]
+        public bool ExclusiveWithdrawalsRequired { get; set; }
+
+        [Optional]
+        public CashoutAggregationModel CashoutAggregation { get; set; }
+    }
+
+    public class CashoutAggregationModel
+    {
+        public int CountThreshold { get; set; }
+
+        public TimeSpan AgeThreshold { get; set; }
     }
 }

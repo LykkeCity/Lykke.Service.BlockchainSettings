@@ -11,7 +11,7 @@ namespace Lykke.Service.BlockchainSettings.Tests.Fakes
     {
         public BlockchainSettingRepositoryFake(IEnumerable<BlockchainSetting> defindedSettings)
         {
-            Settings = defindedSettings.ToList();
+            Settings = defindedSettings?.ToList() ?? new List<BlockchainSetting>();
         }
 
         public List<BlockchainSetting> Settings { get; private set; }

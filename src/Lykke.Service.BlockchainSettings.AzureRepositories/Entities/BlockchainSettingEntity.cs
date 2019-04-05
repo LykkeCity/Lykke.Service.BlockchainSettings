@@ -1,4 +1,5 @@
-﻿using Common;
+﻿using System;
+using Common;
 using Lykke.Service.BlockchainSettings.Core.Domain.Settings;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -11,7 +12,6 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
         "HotWalletAddress": "mvqYvHSMbEEbQZ4GMnxfc7p5BurnJ95bWd",
      */
 
-
     public class BlockchainSettingEntity : TableEntity
     {
         public string Type { get; set; }
@@ -22,15 +22,39 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
 
         public string HotWalletAddress { get; set; }
 
+        public bool AreCashinsDisabled { get; set; }
+
+        public bool AreCashoutsDisabled { get; set; }
+
+        public bool IsExclusiveWithdrawalsRequired { get; set; }
+
+        public int? CashoutAggregationCountThreshold { get; set; }
+
+        public double? CashoutAggregationAgeThresholdSeconds { get; set; }
+
         public BlockchainSetting ToDomain()
         {
+            var cashoutAggregation = this.CashoutAggregationCountThreshold.HasValue &&
+                                     this.CashoutAggregationAgeThresholdSeconds.HasValue
+
+                ? new CashoutAggregationSetting()
+                {
+                    AgeThreshold = TimeSpan.FromSeconds(this.CashoutAggregationAgeThresholdSeconds.Value),
+                    CountThreshold = this.CashoutAggregationCountThreshold.Value,
+                }
+                : null;
+
             return new BlockchainSetting()
             {
                 ApiUrl = this.ApiUrl,
                 HotWalletAddress = this.HotWalletAddress,
                 SignServiceUrl = this.SignServiceUrl,
                 Type = this.Type,
-                ETag = this.ETag
+                ETag = this.ETag,
+                AreCashinsDisabled = this.AreCashinsDisabled,
+                AreCashoutsDisabled = this.AreCashoutsDisabled,
+                CashoutAggregation = cashoutAggregation,
+                IsExclusiveWithdrawalsRequired = this.IsExclusiveWithdrawalsRequired
             };
         }
 
@@ -54,7 +78,12 @@ namespace Lykke.Service.BlockchainSettings.AzureRepositories.Entities
                 Type = settings.Type,
                 ETag = settings.ETag,
                 PartitionKey = GetPartitionKey(settings.Type),
-                RowKey = GetRowKey(settings.Type)
+                RowKey = GetRowKey(settings.Type),
+                AreCashinsDisabled = settings.AreCashinsDisabled,
+                IsExclusiveWithdrawalsRequired = settings.IsExclusiveWithdrawalsRequired,
+                CashoutAggregationAgeThresholdSeconds = settings.CashoutAggregation?.AgeThreshold.TotalSeconds,
+                CashoutAggregationCountThreshold = settings.CashoutAggregation?.CountThreshold,
+                AreCashoutsDisabled = settings.AreCashoutsDisabled
             };
         }
     }
