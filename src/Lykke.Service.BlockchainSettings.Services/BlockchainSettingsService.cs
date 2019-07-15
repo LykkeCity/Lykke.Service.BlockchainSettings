@@ -72,12 +72,12 @@ namespace Lykke.Service.BlockchainSettings.Services
             string hotWalletAddress,
             string signServiceUrl)
         {
-            var isValidApiService = await _blockchainValidationService.ValidateServiceUrlAsync(apiUrl);
+            var isValidApiService = _blockchainValidationService.ValidateServiceUrl(apiUrl);
 
             if (!isValidApiService)
                 throw new NotValidException($"Blockchain integration api({apiUrl}) is not a valid Blockchain API service");
 
-            var isValidSignService = await _blockchainValidationService.ValidateServiceUrlAsync(signServiceUrl);
+            var isValidSignService = _blockchainValidationService.ValidateServiceUrl(signServiceUrl);
 
             if (!isValidSignService)
                 throw new NotValidException($"Blockchain integration sign({signServiceUrl}) is not a valid Blockchain SIGN service");

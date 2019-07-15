@@ -39,24 +39,9 @@ namespace Lykke.Service.BlockchainSettings.Services
             return isAddressValid;
         }
 
-        public async Task<bool> ValidateServiceUrlAsync(string serviceUrl)
+        public bool ValidateServiceUrl(string serviceUrl)
         {
-            var isUrlValid = false;
-
-            try
-            {
-                using (var client = new BlockchainApiClient(_logFactory, serviceUrl, 3))
-                {
-                    var isAlive = await client.GetIsAliveAsync();
-                    isUrlValid = isAlive != null;
-                }
-            }
-            catch (Exception e)
-            {
-                _log.Info(nameof(ValidateHotwalletAsync), message: "Could not check api validity", context: $"{serviceUrl}", exception: e);
-            }
-
-            return isUrlValid;
+            return Uri.TryCreate(serviceUrl, UriKind.Absolute, out _);
         }
     }
 }

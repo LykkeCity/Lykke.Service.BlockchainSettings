@@ -75,8 +75,8 @@ namespace Lykke.Service.BlockchainSettings.Tests
                     x.ValidateHotwalletAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(true));
             blockchainValidationService.Setup(x =>
-                    x.ValidateServiceUrlAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(true));
+                    x.ValidateServiceUrl(It.IsAny<string>()))
+                .Returns(true);
             var blockchainSettingsRepository = new BlockchainSettingRepositoryFake(listSettings);
             var blockchainSettingsService = new BlockchainSettingsService(blockchainSettingsRepository, 
                 blockchainValidationService.Object);

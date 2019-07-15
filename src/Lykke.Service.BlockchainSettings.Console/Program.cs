@@ -87,7 +87,7 @@ namespace Lykke.Service.BlockchainSettings.Console
             }
             catch (Exception e)
             {
-                System.Console.WriteLine($"No access to {blockchainSettingsUrl}");
+                System.Console.WriteLine($"No access to {blockchainSettingsUrl}. {e}");
                 return;
             }
 
@@ -112,7 +112,7 @@ namespace Lykke.Service.BlockchainSettings.Console
                     continue;
                 }
 
-                await client.CreateAsync(new BlockchainSettingsCreateRequest()
+                await client.CreateAsync(new BlockchainSettingsCreateRequest
                 {
                     Type = item.Type,
                     HotWalletAddress = item.HotWalletAddress,
