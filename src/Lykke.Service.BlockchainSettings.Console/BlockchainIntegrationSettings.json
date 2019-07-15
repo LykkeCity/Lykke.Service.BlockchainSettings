@@ -5,8 +5,8 @@
       "ApiUrl": "",
       "SignServiceUrl": "",
       "HotWalletAddress": "",
-      "AreCashinsDisabled": ,
-      "AreCashoutsDisabled": ,
+      "AreCashinsDisabled": false,
+      "AreCashoutsDisabled": false,
       "Monitoring": {
         "InProgressOperationAlarmPeriod": "00:01:00"
       }
