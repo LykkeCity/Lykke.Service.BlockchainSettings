@@ -6,6 +6,6 @@ namespace Lykke.Service.BlockchainSettings.Core.Services
     {
         Task<bool> ValidateHotwalletAsync(string apiUrl, string type, string address);
 
-        Task<bool> ValidateServiceUrlAsync(string serviceUrl);
+        bool ValidateServiceUrl(string serviceUrl);
     }
 }
