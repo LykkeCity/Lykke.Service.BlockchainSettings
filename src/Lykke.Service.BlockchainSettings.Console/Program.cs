@@ -87,7 +87,7 @@ namespace Lykke.Service.BlockchainSettings.Console
             }
             catch (Exception e)
             {
-                System.Console.WriteLine($"No access to {blockchainSettingsUrl}");
+                System.Console.WriteLine($"No access to {blockchainSettingsUrl}. {e}");
                 return;
             }
 
